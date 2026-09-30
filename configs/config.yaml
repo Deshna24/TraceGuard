@@ -1,0 +1,13 @@
+seed: 42
+data_path: data/raw/trajectories/traceguard_pilot_v2.jsonl
+embeddings_dir: results/embeddings
+embedding_model: all-MiniLM-L6-v2
+embedding_dim: 384
+batch_size: 16
+epochs: 30
+learning_rate: 0.001
+threshold: 0.5
+splits:
+  train: 0.7
+  val: 0.15
+  test: 0.15

@@ -1,0 +1,16 @@
+python-dotenv
+pyyaml
+numpy
+pandas
+scikit-learn
+matplotlib
+seaborn
+torch
+sentence-transformers
+langgraph
+langchain
+langchain-openai
+pydantic
+tqdm
+jupyter
+streamlit

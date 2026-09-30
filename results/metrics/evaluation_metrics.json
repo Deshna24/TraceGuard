@@ -1,0 +1,38 @@
+{
+    "LSTM": {
+        "Accuracy": 1.0,
+        "Macro F1": 1.0,
+        "Weighted F1": 1.0,
+        "Macro Precision": 1.0,
+        "Macro Recall": 1.0,
+        "Per Class F1": [
+            1.0,
+            1.0,
+            1.0
+        ]
+    },
+    "Transformer": {
+        "Accuracy": 1.0,
+        "Macro F1": 1.0,
+        "Weighted F1": 1.0,
+        "Macro Precision": 1.0,
+        "Macro Recall": 1.0,
+        "Per Class F1": [
+            1.0,
+            1.0,
+            1.0
+        ]
+    },
+    "Baseline": {
+        "Accuracy": 1.0,
+        "Macro F1": 1.0,
+        "Weighted F1": 1.0,
+        "Macro Precision": 1.0,
+        "Macro Recall": 1.0,
+        "Per Class F1": [
+            1.0,
+            1.0,
+            1.0
+        ]
+    }
+}

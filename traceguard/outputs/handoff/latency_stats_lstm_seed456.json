@@ -1,0 +1,39 @@
+{
+  "threshold": 0.5,
+  "n_hijacked": 30,
+  "n_detected": 30,
+  "detection_rate": 1.0,
+  "pre_action_detection_rate": 0.9,
+  "mean_latency": -2.2666666666666666,
+  "median_latency": -3.0,
+  "std_latency": 1.112106833535071,
+  "min_latency": -3.0,
+  "max_latency": 1.0,
+  "pct_detected_before_injection": 0.0,
+  "pct_detected_after_inj_before_dev": 0.9,
+  "pct_detected_at_deviation": 0.06666666666666667,
+  "pct_detected_after_deviation": 0.03333333333333333,
+  "pct_never_detected": 0.0,
+  "type_a": {
+    "n": 9,
+    "n_detected": 9,
+    "detection_rate": 1.0,
+    "pre_action_detection_rate": 1.0,
+    "mean_latency": -2.5555555555555554,
+    "median_latency": -3.0,
+    "std_latency": 0.7264831572567788,
+    "min_latency": -3.0,
+    "max_latency": -1.0
+  },
+  "type_b": {
+    "n": 21,
+    "n_detected": 21,
+    "detection_rate": 1.0,
+    "pre_action_detection_rate": 0.8571428571428571,
+    "mean_latency": -2.142857142857143,
+    "median_latency": -3.0,
+    "std_latency": 1.2363540870525032,
+    "min_latency": -3.0,
+    "max_latency": 1.0
+  }
+}

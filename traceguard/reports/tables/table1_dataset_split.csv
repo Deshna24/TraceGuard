@@ -1,0 +1,4 @@
+split,groups,trajectories,BENIGN,INJECTION_RESISTED,HIJACKED
+train,140,420,140,140,140
+val,30,90,30,30,30
+test,30,90,30,30,30

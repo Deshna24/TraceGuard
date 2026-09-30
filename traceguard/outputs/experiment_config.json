@@ -1,0 +1,30 @@
+{
+  "experiment_tag": "lstm_seed42",
+  "seed": 42,
+  "dataset": "C:\\Users\\DESHNA\\TraceGuard\\traceguard\\data\\traceguard_v4_1.jsonl",
+  "n_trajectories": 600,
+  "train_groups": 140,
+  "val_groups": 30,
+  "test_groups": 30,
+  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "embedding_dim": 384,
+  "lstm_config": {
+    "architecture": "TraceGuardLSTM",
+    "input_size": 384,
+    "hidden_size": 128,
+    "num_layers": 2,
+    "dropout": 0.2,
+    "num_classes": 3,
+    "bidirectional": false,
+    "pooling": "last_hidden_state"
+  },
+  "learning_rate": 0.001,
+  "weight_decay": 0.0001,
+  "batch_size": 32,
+  "max_epochs": 50,
+  "early_stopping_patience": 7,
+  "detection_threshold": 0.5,
+  "device": "cpu",
+  "best_epoch": 21,
+  "best_val_f1": 0.9227385608741541
+}

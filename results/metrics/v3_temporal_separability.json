@@ -1,0 +1,79 @@
+{
+    "dataset_name": "TRACEGUARD v3",
+    "total_trajectories": 300,
+    "total_counterfactual_groups": 100,
+    "stage_classification": {
+        "PRE-INJECTION": {
+            "Accuracy": 0.5,
+            "Macro F1": 0.3333333333333333
+        },
+        "THROUGH-INJECTION": {
+            "Accuracy": 0.5,
+            "Macro F1": 0.3333333333333333
+        },
+        "PRE-DEVIATION": {
+            "Accuracy": 0.5,
+            "Macro F1": 0.3333333333333333
+        },
+        "AT-DEVIATION": {
+            "Accuracy": 0.975,
+            "Macro F1": 0.9746031746031747
+        },
+        "FULL TRAJECTORY": {
+            "Accuracy": 0.975,
+            "Macro F1": 0.9746031746031747
+        }
+    },
+    "prefix_comparison": {
+        "Total Paired Groups": 100,
+        "Identical Pre-Deviation Text Count": 100,
+        "Identical Pre-Deviation Tool Sequence Count": 100,
+        "Mean Cosine Similarity": 1.0,
+        "Min Cosine Similarity": 0.999999999999997,
+        "Max Cosine Similarity": 1.0000000000000038,
+        "Mean Token Overlap (Jaccard)": 1.0,
+        "Min Token Overlap (Jaccard)": 1.0,
+        "Max Token Overlap (Jaccard)": 1.0,
+        "Differing Group IDs": []
+    },
+    "pre_dev_top_features": {
+        "INJECTION_RESISTED": [
+            "10",
+            "100",
+            "101",
+            "104",
+            "108",
+            "1089",
+            "11",
+            "110",
+            "113",
+            "117"
+        ],
+        "HIJACKED": [
+            "wrap",
+            "worth",
+            "workflow",
+            "wireless",
+            "window",
+            "week",
+            "website",
+            "webcam",
+            "warranty",
+            "warehouse"
+        ],
+        "max_absolute_coefficient": 0.0,
+        "note": "Pre-deviation texts are 100% identical between counterfactual pairs, resulting in zero discriminative feature weight (coefficients ~ 0)."
+    },
+    "length_leakage_accuracy": {
+        "full_trajectory": 0.75,
+        "pre_deviation": 0.5
+    },
+    "tool_sequence_pre_dev_accuracy": 0.5,
+    "prefix_accuracy_curve": {
+        "20%": 0.575,
+        "40%": 0.6300000000000001,
+        "60%": 0.97,
+        "80%": 0.97,
+        "100%": 0.975
+    }
+}

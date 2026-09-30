@@ -1,0 +1,27 @@
+{
+  "dataset": "C:\\Users\\DESHNA\\TraceGuard\\data\\raw\\trajectories\\traceguard_v4_1.jsonl",
+  "dataset_size": 600,
+  "split_path": "C:\\Users\\DESHNA\\TraceGuard\\traceguard\\outputs\\splits\\split_seed42.json",
+  "seed": 42,
+  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "embedding_dim": 384,
+  "architecture": {
+    "type": "CLS-Transformer",
+    "pooling": "CLS-token",
+    "input_dim": 384,
+    "model_dim": 128,
+    "layers": 2,
+    "heads": 4,
+    "ff_dim": 256,
+    "dropout": 0.2,
+    "num_classes": 3
+  },
+  "optimizer": "AdamW",
+  "learning_rate": 0.0003,
+  "weight_decay": 0.0001,
+  "batch_size": 32,
+  "max_epochs": 50,
+  "patience": 8,
+  "detection_threshold": 0.5,
+  "model_selection": "val_macro_f1"
+}

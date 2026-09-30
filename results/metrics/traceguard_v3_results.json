@@ -1,0 +1,301 @@
+{
+    "data_splitting": {
+        "train_groups_count": 70,
+        "val_groups_count": 15,
+        "test_groups_count": 15,
+        "train_group_ids": [
+            "TG_GROUP_002",
+            "TG_GROUP_003",
+            "TG_GROUP_006",
+            "TG_GROUP_007",
+            "TG_GROUP_008",
+            "TG_GROUP_009",
+            "TG_GROUP_010",
+            "TG_GROUP_011",
+            "TG_GROUP_013",
+            "TG_GROUP_016",
+            "TG_GROUP_017",
+            "TG_GROUP_019",
+            "TG_GROUP_020",
+            "TG_GROUP_021",
+            "TG_GROUP_022",
+            "TG_GROUP_023",
+            "TG_GROUP_024",
+            "TG_GROUP_025",
+            "TG_GROUP_027",
+            "TG_GROUP_031",
+            "TG_GROUP_033",
+            "TG_GROUP_034",
+            "TG_GROUP_035",
+            "TG_GROUP_037",
+            "TG_GROUP_038",
+            "TG_GROUP_039",
+            "TG_GROUP_040",
+            "TG_GROUP_041",
+            "TG_GROUP_042",
+            "TG_GROUP_043",
+            "TG_GROUP_044",
+            "TG_GROUP_045",
+            "TG_GROUP_046",
+            "TG_GROUP_047",
+            "TG_GROUP_048",
+            "TG_GROUP_049",
+            "TG_GROUP_050",
+            "TG_GROUP_051",
+            "TG_GROUP_052",
+            "TG_GROUP_053",
+            "TG_GROUP_056",
+            "TG_GROUP_057",
+            "TG_GROUP_059",
+            "TG_GROUP_060",
+            "TG_GROUP_061",
+            "TG_GROUP_062",
+            "TG_GROUP_063",
+            "TG_GROUP_064",
+            "TG_GROUP_066",
+            "TG_GROUP_067",
+            "TG_GROUP_068",
+            "TG_GROUP_069",
+            "TG_GROUP_071",
+            "TG_GROUP_073",
+            "TG_GROUP_074",
+            "TG_GROUP_075",
+            "TG_GROUP_077",
+            "TG_GROUP_079",
+            "TG_GROUP_080",
+            "TG_GROUP_081",
+            "TG_GROUP_083",
+            "TG_GROUP_084",
+            "TG_GROUP_086",
+            "TG_GROUP_088",
+            "TG_GROUP_091",
+            "TG_GROUP_092",
+            "TG_GROUP_093",
+            "TG_GROUP_097",
+            "TG_GROUP_099",
+            "TG_GROUP_100"
+        ],
+        "val_group_ids": [
+            "TG_GROUP_001",
+            "TG_GROUP_026",
+            "TG_GROUP_028",
+            "TG_GROUP_030",
+            "TG_GROUP_054",
+            "TG_GROUP_058",
+            "TG_GROUP_065",
+            "TG_GROUP_072",
+            "TG_GROUP_078",
+            "TG_GROUP_085",
+            "TG_GROUP_089",
+            "TG_GROUP_090",
+            "TG_GROUP_094",
+            "TG_GROUP_096",
+            "TG_GROUP_098"
+        ],
+        "test_group_ids": [
+            "TG_GROUP_004",
+            "TG_GROUP_005",
+            "TG_GROUP_012",
+            "TG_GROUP_014",
+            "TG_GROUP_015",
+            "TG_GROUP_018",
+            "TG_GROUP_029",
+            "TG_GROUP_032",
+            "TG_GROUP_036",
+            "TG_GROUP_055",
+            "TG_GROUP_070",
+            "TG_GROUP_076",
+            "TG_GROUP_082",
+            "TG_GROUP_087",
+            "TG_GROUP_095"
+        ]
+    },
+    "full_trajectory_evaluation": {
+        "Baseline": {
+            "Accuracy": 0.7777777777777778,
+            "Macro Precision": 0.7777777777777777,
+            "Macro Recall": 0.7777777777777777,
+            "Macro F1": 0.7777777777777777,
+            "Weighted F1": 0.7777777777777778
+        },
+        "LSTM": {
+            "Accuracy": 1.0,
+            "Macro Precision": 1.0,
+            "Macro Recall": 1.0,
+            "Macro F1": 1.0,
+            "Weighted F1": 1.0
+        },
+        "Transformer": {
+            "Accuracy": 0.6666666666666666,
+            "Macro Precision": 0.5,
+            "Macro Recall": 0.6666666666666666,
+            "Macro F1": 0.5555555555555555,
+            "Weighted F1": 0.5555555555555556
+        }
+    },
+    "detection_latency_and_pre_action": {
+        "Baseline": {
+            "mean_latency": 0.4666666666666667,
+            "median_latency": 0.0,
+            "min_latency": 0.0,
+            "max_latency": 4.0,
+            "pre_action_detection_rate": 0.0,
+            "benign_fpr": 0.0,
+            "resisted_fpr": 0.0,
+            "overall_fpr": 0.0
+        },
+        "LSTM": {
+            "mean_latency": 0.4666666666666667,
+            "median_latency": 0.0,
+            "min_latency": 0.0,
+            "max_latency": 1.0,
+            "pre_action_detection_rate": 0.0,
+            "benign_fpr": 0.0,
+            "resisted_fpr": 0.0,
+            "overall_fpr": 0.0
+        },
+        "Transformer": {
+            "mean_latency": 3.4,
+            "median_latency": 3.0,
+            "min_latency": 2.0,
+            "max_latency": 5.0,
+            "pre_action_detection_rate": 0.0,
+            "benign_fpr": 0.0,
+            "resisted_fpr": 0.0,
+            "overall_fpr": 0.0
+        }
+    },
+    "temporal_stages": {
+        "Baseline": {
+            "PRE-INJECTION": {
+                "Accuracy": 0.3333333333333333,
+                "Macro F1": 0.2663817663817664,
+                "Resisted_vs_Hijacked_Accuracy": 0.23333333333333334
+            },
+            "THROUGH-INJECTION": {
+                "Accuracy": 0.4444444444444444,
+                "Macro F1": 0.38979039891818795,
+                "Resisted_vs_Hijacked_Accuracy": 0.4
+            },
+            "PRE-DEVIATION": {
+                "Accuracy": 0.4444444444444444,
+                "Macro F1": 0.38979039891818795,
+                "Resisted_vs_Hijacked_Accuracy": 0.4
+            },
+            "AT-DEVIATION": {
+                "Accuracy": 0.7333333333333333,
+                "Macro F1": 0.7284448426921545,
+                "Resisted_vs_Hijacked_Accuracy": 0.8333333333333334
+            },
+            "FULL": {
+                "Accuracy": 0.7777777777777778,
+                "Macro F1": 0.7777777777777777,
+                "Resisted_vs_Hijacked_Accuracy": 0.8333333333333334
+            }
+        },
+        "LSTM": {
+            "PRE-INJECTION": {
+                "Accuracy": 0.3333333333333333,
+                "Macro F1": 0.16666666666666666,
+                "Resisted_vs_Hijacked_Accuracy": 0.0
+            },
+            "THROUGH-INJECTION": {
+                "Accuracy": 0.37777777777777777,
+                "Macro F1": 0.2487468671679198,
+                "Resisted_vs_Hijacked_Accuracy": 0.06666666666666667
+            },
+            "PRE-DEVIATION": {
+                "Accuracy": 0.37777777777777777,
+                "Macro F1": 0.2487468671679198,
+                "Resisted_vs_Hijacked_Accuracy": 0.06666666666666667
+            },
+            "AT-DEVIATION": {
+                "Accuracy": 0.8222222222222222,
+                "Macro F1": 0.8196969696969697,
+                "Resisted_vs_Hijacked_Accuracy": 0.7333333333333333
+            },
+            "FULL": {
+                "Accuracy": 1.0,
+                "Macro F1": 1.0,
+                "Resisted_vs_Hijacked_Accuracy": 1.0
+            }
+        },
+        "Transformer": {
+            "PRE-INJECTION": {
+                "Accuracy": 0.3333333333333333,
+                "Macro F1": 0.16666666666666666,
+                "Resisted_vs_Hijacked_Accuracy": 0.5
+            },
+            "THROUGH-INJECTION": {
+                "Accuracy": 0.3333333333333333,
+                "Macro F1": 0.16666666666666666,
+                "Resisted_vs_Hijacked_Accuracy": 0.5
+            },
+            "PRE-DEVIATION": {
+                "Accuracy": 0.3333333333333333,
+                "Macro F1": 0.16666666666666666,
+                "Resisted_vs_Hijacked_Accuracy": 0.5
+            },
+            "AT-DEVIATION": {
+                "Accuracy": 0.3333333333333333,
+                "Macro F1": 0.16666666666666666,
+                "Resisted_vs_Hijacked_Accuracy": 0.5
+            },
+            "FULL": {
+                "Accuracy": 0.6666666666666666,
+                "Macro F1": 0.5555555555555555,
+                "Resisted_vs_Hijacked_Accuracy": 1.0
+            }
+        }
+    },
+    "step_shuffling_ablation": {
+        "Baseline": {
+            "Original": {
+                "Accuracy": 0.7777777777777778,
+                "Macro Precision": 0.7777777777777777,
+                "Macro Recall": 0.7777777777777777,
+                "Macro F1": 0.7777777777777777,
+                "Weighted F1": 0.7777777777777778
+            },
+            "Shuffled": {
+                "Accuracy": 0.7777777777777778,
+                "Macro Precision": 0.7777777777777777,
+                "Macro Recall": 0.7777777777777777,
+                "Macro F1": 0.7777777777777777,
+                "Weighted F1": 0.7777777777777778
+            }
+        },
+        "LSTM": {
+            "Original": {
+                "Accuracy": 1.0,
+                "Macro Precision": 1.0,
+                "Macro Recall": 1.0,
+                "Macro F1": 1.0,
+                "Weighted F1": 1.0
+            },
+            "Shuffled": {
+                "Accuracy": 0.8444444444444444,
+                "Macro Precision": 0.8611111111111112,
+                "Macro Recall": 0.8444444444444444,
+                "Macro F1": 0.8421516754850087,
+                "Weighted F1": 0.8421516754850089
+            }
+        },
+        "Transformer": {
+            "Original": {
+                "Accuracy": 0.6666666666666666,
+                "Macro Precision": 0.5,
+                "Macro Recall": 0.6666666666666666,
+                "Macro F1": 0.5555555555555555,
+                "Weighted F1": 0.5555555555555556
+            },
+            "Shuffled": {
+                "Accuracy": 0.5333333333333333,
+                "Macro Precision": 0.47222222222222227,
+                "Macro Recall": 0.5333333333333333,
+                "Macro F1": 0.44607843137254904,
+                "Weighted F1": 0.44607843137254904
+            }
+        }
+    }
+}

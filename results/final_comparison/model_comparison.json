@@ -1,0 +1,41 @@
+[
+  {
+    "model": "Mean Pooling + Logistic Regression",
+    "accuracy": 0.6555555555555556,
+    "macro_precision": 0.6477633477633478,
+    "macro_recall": 0.6555555555555556,
+    "macro_f1": 0.6456247456247456,
+    "hijacked_precision": 0.6857142857142857,
+    "hijacked_recall": 0.8,
+    "hijacked_f1": 0.7384615384615385,
+    "hijacked_auroc": 0.8988888888888888,
+    "pre_action_rate": 0.03333333333333333,
+    "mean_latency": -0.16666666666666666
+  },
+  {
+    "model": "LSTM",
+    "accuracy": 0.8555555555555555,
+    "macro_precision": 0.8549679487179488,
+    "macro_recall": 0.8555555555555555,
+    "macro_f1": 0.8533026113671275,
+    "hijacked_precision": 0.875,
+    "hijacked_recall": 0.9333333333333333,
+    "hijacked_f1": 0.9032258064516129,
+    "hijacked_auroc": 0.9794444444444445,
+    "pre_action_rate": 0.9333333333333333,
+    "mean_latency": -2.7142857142857144
+  },
+  {
+    "model": "Transformer (CLS)",
+    "accuracy": 0.7111111111111111,
+    "macro_precision": 0.7140415140415142,
+    "macro_recall": 0.7111111111111112,
+    "macro_f1": 0.703267973856209,
+    "hijacked_precision": 0.9333333333333333,
+    "hijacked_recall": 0.9333333333333333,
+    "hijacked_f1": 0.9333333333333333,
+    "hijacked_auroc": 0.9888888888888889,
+    "pre_action_rate": 0.9,
+    "mean_latency": -3.3214285714285716
+  }
+]

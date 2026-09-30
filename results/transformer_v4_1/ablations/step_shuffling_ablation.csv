@@ -1,0 +1,2 @@
+seed,n_repetitions,original_accuracy,original_macro_f1,shuffled_accuracy_mean,shuffled_accuracy_std,shuffled_macro_f1_mean,shuffled_macro_f1_std,f1_delta
+42,10,0.7111111111111111,0.703267973856209,0.6644444444444446,0.027577052546646344,0.6563406286094231,0.032269934071537366,0.04692734524678588

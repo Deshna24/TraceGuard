@@ -1,0 +1,29 @@
+project:
+  name: TRACEGUARD
+  seed: 42
+
+dataset:
+  pilot_size: 90
+  target_size: 3000
+
+embedding:
+  model: "all-MiniLM-L6-v2"
+
+model:
+  hidden_dim: 128
+  num_layers: 2
+  dropout: 0.2
+
+training:
+  batch_size: 32
+  learning_rate: 0.001
+  epochs: 30
+  early_stopping_patience: 5
+
+detection:
+  threshold: 0.90
+
+llm:
+  provider: ollama
+  model_name: llama3.1
+  temperature: 0.0

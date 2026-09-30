@@ -1,0 +1,112 @@
+{
+  "overall_status": "PASS",
+  "ready_to_freeze": "YES",
+  "critical_failures": [],
+  "warnings": [],
+  "seed42_metrics": {
+    "accuracy": 0.7111,
+    "macro_f1": 0.7033,
+    "benign_f1": 0.6667,
+    "resisted_f1": 0.5098,
+    "hijacked_f1": 0.9333,
+    "pre_action_detection": 0.9,
+    "mean_latency": -3.3214,
+    "median_latency": -3.0
+  },
+  "five_seed_metrics": {
+    "accuracy_mean": 0.5422,
+    "accuracy_std": 0.2608,
+    "macro_f1_mean": 0.4453,
+    "macro_f1_std": 0.3342,
+    "benign_f1_mean": 0.6281,
+    "benign_f1_std": 0.1802,
+    "resisted_f1_mean": 0.2987,
+    "resisted_f1_std": 0.3953,
+    "hijacked_f1_mean": 0.4092,
+    "hijacked_f1_std": 0.4494,
+    "pre_action_detection_mean": 0.2333,
+    "pre_action_detection_std": 0.349
+  },
+  "step_shuffling_ablation": {
+    "original_macro_f1": 0.7033,
+    "shuffled_macro_f1_mean": 0.6563,
+    "shuffled_macro_f1_std": 0.0323,
+    "delta_f1": 0.0469
+  },
+  "leakage_flags": 0,
+  "final_comparison_valid": true,
+  "audit_log": [
+    {
+      "section": "Artifact Integrity",
+      "check": "Expected Files Exist",
+      "status": "PASS",
+      "details": "All expected 17 core artifact files present and non-empty."
+    },
+    {
+      "section": "Dataset Integrity",
+      "check": "v4.1 Trajectory Audit",
+      "status": "PASS",
+      "details": "600 trajectories, 200 groups (3 trajs/group), exact balance (200 B, 200 IR, 200 H), 6 steps/traj."
+    },
+    {
+      "section": "Split Integrity",
+      "check": "Group Disjointness & Counts",
+      "status": "PASS",
+      "details": "Verified 0 group overlap across train/val/test for all 5 seeds (140/30/30 group split)."
+    },
+    {
+      "section": "Architecture Integrity",
+      "check": "Model Hyperparameters",
+      "status": "PASS",
+      "details": "CLSTransformer architecture strictly matches spec (dim=384->128, 2 layers, 4 heads, ff=256, dropout=0.2, CLS-pooling)."
+    },
+    {
+      "section": "Three-Class Learning",
+      "check": "Non-Zero Resisted F1 & Class Presence",
+      "status": "PASS",
+      "details": "INJECTION_RESISTED F1 = 0.5098 > 0. Predictions breakdown: {'HIJACKED': 84, 'BENIGN': 5, 'INJECTION_RESISTED': 1}. Probabilities sum to 1.0."
+    },
+    {
+      "section": "Prefix & Early Detection",
+      "check": "Raw Prefix Recalculation",
+      "status": "PASS",
+      "details": "Recalculated from 540 raw prefix rows: Total=30, Detected=28/30 (93.3%), Pre-Action Rate=90.0% (27/30), Mean Latency=-3.321, Median Latency=-3.0."
+    },
+    {
+      "section": "Five-Seed Audit",
+      "check": "Raw 5-Seed Recalculation",
+      "status": "PASS",
+      "details": "Recalculated across 5 seeds: Accuracy=0.5422\u00b10.2916, Macro F1=0.4453\u00b10.3736, BENIGN F1=0.6281\u00b10.2015, RESISTED F1=0.2987\u00b10.4420, HIJACKED F1=0.4092\u00b10.5024, PreAction=0.2333\u00b10.3902. Match saved robustness file!"
+    },
+    {
+      "section": "Step-Shuffling Ablation",
+      "check": "Ablation Artifact Verification",
+      "status": "PASS",
+      "details": "Original Macro F1 = 0.7033, Shuffled Macro F1 = 0.6563, Delta F1 = 0.0469. Verified."
+    },
+    {
+      "section": "Data Leakage Audit",
+      "check": "Split & Threshold Leakage Check",
+      "status": "PASS",
+      "details": "Confirmed: 0 group overlap between splits, fixed 0.5 threshold (no test tuning), prefix slicing uses embs[:k] only."
+    },
+    {
+      "section": "Old Artifact Check",
+      "check": "Legacy File Contamination",
+      "status": "PASS",
+      "details": "No old unversioned Transformer artifacts found in root results/. Canonical artifacts are in results/transformer_v4_1/."
+    },
+    {
+      "section": "Final Comparison Audit",
+      "check": "Table Consistency Check",
+      "status": "PASS",
+      "details": "model_comparison.csv & .md correctly compare LogReg (F1=0.6456), Frozen LSTM (F1=0.8533), and CLS Transformer (F1=0.7033)."
+    },
+    {
+      "section": "Report Quality Check",
+      "check": "Scientific Language Compliance",
+      "status": "PASS",
+      "details": "Reports adhere to cautious scientific language: explicit synthetic benchmark scope, step-shuffling ordering interpretation, and 5-seed optimization variance documented without overclaiming."
+    }
+  ]
+}

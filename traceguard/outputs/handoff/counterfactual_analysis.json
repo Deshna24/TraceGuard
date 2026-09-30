@@ -1,0 +1,10 @@
+{
+  "n_groups": 30,
+  "fully_correct_groups": 20,
+  "group_accuracy": 0.6666666666666666,
+  "hijacked_missed": 2,
+  "resisted_as_benign": 2,
+  "resisted_as_hijacked": 1,
+  "hijacked_as_benign": 2,
+  "hijacked_as_resisted": 0
+}

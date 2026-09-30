@@ -1,0 +1,11 @@
+{
+  "seed": 42,
+  "n_repetitions": 10,
+  "original_accuracy": 0.7111111111111111,
+  "original_macro_f1": 0.703267973856209,
+  "shuffled_accuracy_mean": 0.6644444444444446,
+  "shuffled_accuracy_std": 0.027577052546646344,
+  "shuffled_macro_f1_mean": 0.6563406286094231,
+  "shuffled_macro_f1_std": 0.032269934071537366,
+  "f1_delta": 0.04692734524678588
+}

@@ -1,0 +1,9 @@
+metric,value
+original_accuracy,0.8556
+original_macro_f1,0.8533
+shuffled_mean_acc,0.5933
+shuffled_std_acc,0.0291
+shuffled_mean_f1,0.5722
+shuffled_std_f1,0.0334
+f1_delta,0.2811
+n_reps,10
