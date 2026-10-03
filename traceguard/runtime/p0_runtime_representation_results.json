@@ -1,0 +1,152 @@
+{
+  "all_passed": true,
+  "canonical_preprocessing": {
+    "module": "src.preprocessing",
+    "function": "build_step_text",
+    "fields": [
+      "user_goal",
+      "step_number",
+      "action",
+      "tool",
+      "tool_input",
+      "tool_observation",
+      "state"
+    ],
+    "format": "Labeled sections separated by two newlines; values follow each label and end without a trailing newline.",
+    "metadata_excluded": true,
+    "missing_values": "None and missing values become empty strings; user_goal is passed through unchanged."
+  },
+  "embedding": {
+    "model": "sentence-transformers/all-MiniLM-L6-v2",
+    "dimension": 384,
+    "single_step_shape": [
+      1,
+      384
+    ],
+    "multi_step_shape": [
+      6,
+      384
+    ],
+    "dtype": "float32",
+    "normalize_embeddings": false,
+    "batch_encoding_matches_canonical": true,
+    "single_vs_batch_max_abs_diff": 1.043081283569336e-07,
+    "single_vs_batch_bitwise_equal": false,
+    "selected_device": "cuda:0",
+    "cpu_comparison_max_abs_diff": 1.341104507446289e-07,
+    "cpu_comparison_allclose_atol_1e-5": true
+  },
+  "sequence": {
+    "full_length": 6,
+    "prefix_shapes": {
+      "1": [
+        1,
+        1,
+        384
+      ],
+      "2": [
+        1,
+        2,
+        384
+      ],
+      "3": [
+        1,
+        3,
+        384
+      ],
+      "4": [
+        1,
+        4,
+        384
+      ],
+      "5": [
+        1,
+        5,
+        384
+      ],
+      "6": [
+        1,
+        6,
+        384
+      ]
+    },
+    "padding": "right/trailing zeros only for variable-length batches",
+    "padding_value": 0.0,
+    "tensor_dtype": "torch.float32",
+    "tensor_layout": "[batch, sequence, embedding]",
+    "variable_lengths": [
+      2,
+      6
+    ],
+    "ordering": "step list order is preserved; non-consecutive step numbers are rejected"
+  },
+  "prefixes": {
+    "1": {
+      "shape": [
+        1,
+        1,
+        384
+      ],
+      "lengths": [
+        1
+      ],
+      "ordered": true
+    },
+    "2": {
+      "shape": [
+        1,
+        2,
+        384
+      ],
+      "lengths": [
+        2
+      ],
+      "ordered": true
+    },
+    "3": {
+      "shape": [
+        1,
+        3,
+        384
+      ],
+      "lengths": [
+        3
+      ],
+      "ordered": true
+    },
+    "4": {
+      "shape": [
+        1,
+        4,
+        384
+      ],
+      "lengths": [
+        4
+      ],
+      "ordered": true
+    },
+    "5": {
+      "shape": [
+        1,
+        5,
+        384
+      ],
+      "lengths": [
+        5
+      ],
+      "ordered": true
+    },
+    "6": {
+      "shape": [
+        1,
+        6,
+        384
+      ],
+      "lengths": [
+        6
+      ],
+      "ordered": true
+    }
+  },
+  "frozen_artifacts_modified": false
+}

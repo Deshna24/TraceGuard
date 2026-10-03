@@ -1,0 +1,111 @@
+{
+  "all_passed": true,
+  "checkpoint": "C:\\Users\\tedha\\TraceGuard\\traceguard\\outputs\\models\\lstm_seed42_best.pth",
+  "device": "cpu",
+  "model_eval": true,
+  "parameters_require_grad": false,
+  "prefixes": {
+    "1": {
+      "shape": [
+        1,
+        1,
+        384
+      ],
+      "probabilities": {
+        "BENIGN": 0.3402408957481384,
+        "INJECTION_RESISTED": 0.3147733807563782,
+        "HIJACKED": 0.3449856638908386
+      },
+      "predicted_class": "HIJACKED",
+      "hijack_probability": 0.3449856638908386,
+      "equivalent_to_direct": true
+    },
+    "2": {
+      "shape": [
+        1,
+        2,
+        384
+      ],
+      "probabilities": {
+        "BENIGN": 0.3042639195919037,
+        "INJECTION_RESISTED": 0.3377346992492676,
+        "HIJACKED": 0.35800138115882874
+      },
+      "predicted_class": "HIJACKED",
+      "hijack_probability": 0.35800138115882874,
+      "equivalent_to_direct": true
+    },
+    "3": {
+      "shape": [
+        1,
+        3,
+        384
+      ],
+      "probabilities": {
+        "BENIGN": 0.2512342929840088,
+        "INJECTION_RESISTED": 0.47720569372177124,
+        "HIJACKED": 0.27156001329421997
+      },
+      "predicted_class": "INJECTION_RESISTED",
+      "hijack_probability": 0.27156001329421997,
+      "equivalent_to_direct": true
+    },
+    "4": {
+      "shape": [
+        1,
+        4,
+        384
+      ],
+      "probabilities": {
+        "BENIGN": 0.17831538617610931,
+        "INJECTION_RESISTED": 0.7493813037872314,
+        "HIJACKED": 0.07230336219072342
+      },
+      "predicted_class": "INJECTION_RESISTED",
+      "hijack_probability": 0.07230336219072342,
+      "equivalent_to_direct": true
+    },
+    "5": {
+      "shape": [
+        1,
+        5,
+        384
+      ],
+      "probabilities": {
+        "BENIGN": 0.34174466133117676,
+        "INJECTION_RESISTED": 0.6353882551193237,
+        "HIJACKED": 0.022867104038596153
+      },
+      "predicted_class": "INJECTION_RESISTED",
+      "hijack_probability": 0.022867104038596153,
+      "equivalent_to_direct": true
+    },
+    "6": {
+      "shape": [
+        1,
+        6,
+        384
+      ],
+      "probabilities": {
+        "BENIGN": 0.9586424231529236,
+        "INJECTION_RESISTED": 0.02673080749809742,
+        "HIJACKED": 0.014626768417656422
+      },
+      "predicted_class": "BENIGN",
+      "hijack_probability": 0.014626768417656422,
+      "equivalent_to_direct": true
+    }
+  },
+  "threshold": 0.5,
+  "threshold_results": {
+    "below": false,
+    "equal": true,
+    "above": true
+  },
+  "fresh_detector_equivalent": true,
+  "state_isolation": true,
+  "caller_step_isolation": true,
+  "checkpoint_hash_before": "c8cc5e94e99ce00469175b6b9c1995199c3af05c",
+  "checkpoint_hash_after": "c8cc5e94e99ce00469175b6b9c1995199c3af05c",
+  "checkpoint_unchanged": true
+}

@@ -1,0 +1,36 @@
+{
+  "all_passed": true,
+  "module": "traceguard/runtime/trajectory.py",
+  "class": "TrajectoryState",
+  "stored_fields": [
+    "step",
+    "action",
+    "tool",
+    "tool_input",
+    "tool_observation",
+    "state"
+  ],
+  "step_numbering": "1-based consecutive order; invalid, duplicate, skipped, and out-of-order steps rejected",
+  "prefixes": {
+    "1": true,
+    "2": true,
+    "3": true,
+    "4": true,
+    "5": true,
+    "6": true
+  },
+  "external_mutation_protection": true,
+  "prefix_isolation": true,
+  "user_goal_integrity": true,
+  "detector_compatibility": {
+    "canonical_texts": true,
+    "prefix_length": 3,
+    "inference_succeeded": true,
+    "probabilities_valid": true
+  },
+  "temporary_detector_artifacts_removed": [],
+  "frozen_hashes_unchanged": true,
+  "checkpoint_git_hash": "ec827abab90df2a19750645b76063a35fd2e6df5",
+  "dataset_git_hash": "8e995c1d2391320ffe5ec3068d1b950295a44a32",
+  "split_git_hash": "54ab36ab25ddd1f5fc86d6cad628140c63761c66"
+}

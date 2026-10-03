@@ -1,0 +1,37 @@
+{
+  "all_passed": true,
+  "checks": {
+    "checkpoint_load": "PASS",
+    "architecture_match": "PASS",
+    "model_load": "PASS",
+    "minilm_load": "PASS",
+    "step_representation": "PASS",
+    "embedding_shape": "PASS",
+    "single_step_inference": "PASS",
+    "class_mapping": "PASS",
+    "prefix_inference": "PASS",
+    "threshold_logic": "PASS",
+    "frozen_artifacts_safe": "PASS",
+    "real_trajectory_score": "PASS"
+  },
+  "frozen_checkpoint": "C:\\Users\\tedha\\TraceGuard\\traceguard\\outputs\\models\\lstm_seed42_best.pth",
+  "frozen_config": {
+    "architecture": "TraceGuardLSTM",
+    "input_size": 384,
+    "hidden_size": 128,
+    "num_layers": 2,
+    "dropout": 0.2,
+    "num_classes": 3,
+    "bidirectional": false,
+    "pooling": "last_hidden_state"
+  },
+  "class_mapping": {
+    "BENIGN": 0,
+    "INJECTION_RESISTED": 1,
+    "HIJACKED": 2
+  },
+  "threshold": 0.5,
+  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "embedding_dim": 384,
+  "steps_per_trajectory": 6
+}
