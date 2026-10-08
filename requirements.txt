@@ -15,3 +15,6 @@ tqdm
 jupyter
 streamlit
 pytest
+fastapi
+uvicorn
+websockets

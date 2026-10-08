@@ -1747,3 +1747,37 @@ The pre-action safety gate task is complete; subsequent work must preserve it.
 
 ### Next task
 - [ ] P1 — Alert / Explainability Panel.
+
+ - - - 
+ 
+ # #   E n t r y   1 3 
+ 
+ * * D a t e : * *   \ 2 0 2 6 - 1 0 - 0 7 \     
+ * * P h a s e : * *   \ P 0      C o m p l e t e   W e b   A p p l i c a t i o n   M i g r a t i o n \     
+ * * S t a t u s   b e f o r e : * *   \ N o t   S t a r t e d \ 
+ 
+ # # #   P 0   T a s k s 
+ -   [   ]   R e a c t   w e b   a p p l i c a t i o n   i n i t i a l i z e d 
+ -   [   ]   F a s t A P I / W e b S o c k e t   b a c k e n d   i m p l e m e n t e d 
+ -   [   ]   L i v e   t r a j e c t o r y   v i s u a l i z a t i o n   i m p l e m e n t e d 
+ -   [   ]   A t t a c k e r / i n j e c t i o n   v i s u a l i z a t i o n   i m p l e m e n t e d 
+ -   [   ]   G o a l - v s - b e h a v i o r   c o m p a r i s o n   i m p l e m e n t e d 
+ -   [   ]   P r e - a c t i o n   g a t e   v i s u a l i z a t i o n   i m p l e m e n t e d 
+ -   [   ]   B E N I G N   l i v e   m o d e   a c c e p t a n c e 
+ -   [   ]   I N J E C T I O N _ R E S I S T E D   l i v e   m o d e   a c c e p t a n c e 
+ -   [   ]   H I J A C K E D   l i v e   m o d e   a c c e p t a n c e 
+ -   [   ]   S t r e a m l i t   m a r k e d   s u p e r s e d e d 
+ -   [   ]   S t r e a m l i t   r e m o v a l   ( a f t e r   s u c c e s s f u l   m i g r a t i o n ) 
+ -   [   ]   R E A D M E   u p d a t e 
+ -   [   ]   F i n a l   a c c e p t a n c e   ( i n c l u d e s   n e w   w e b   a p p l i c a t i o n ) 
+ 
+ # # #   P 0 / P 1   I m p l e m e n t a t i o n   T a s k s 
+ -   [   ]   P r o b a b i l i t y   g r a p h   i m p l e m e n t e d 
+ 
+ # # #   S t a t u s   a f t e r 
+ -   [   ]   W e b   A p p l i c a t i o n   M i g r a t i o n   i n   p r o g r e s s 
+ 
+ # # #   N e x t   t a s k 
+ -   [   ]   I n i t i a l i z e   R e a c t   f r o n t e n d   a n d   F a s t A P I   b a c k e n d . 
+  
+ 
