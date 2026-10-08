@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShieldCheck, ShieldAlert, AlertTriangle } from 'lucide-react';
 import { useTraceGuard } from '../hooks/useTraceGuard';

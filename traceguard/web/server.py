@@ -201,6 +201,37 @@ async def list_scenarios():
 
 
 # ---------------------------------------------------------------------------
+# GET /api/history
+# ---------------------------------------------------------------------------
+@app.get("/api/history", tags=["history"])
+async def get_history():
+    """Return all recorded runtime evidence from the logs directory."""
+    import json
+    from runtime.logger import DEFAULT_LOG_DIRECTORY
+    history = []
+    if DEFAULT_LOG_DIRECTORY.exists():
+        for log_file in DEFAULT_LOG_DIRECTORY.glob("*.json"):
+            try:
+                content = json.loads(log_file.read_text("utf-8"))
+                history.append(content)
+            except Exception:
+                pass
+    # Sort by timestamp descending if available, else by run_id
+    history.sort(key=lambda x: x.get("timestamp", ""), reverse=True)
+    return {"history": history}
+
+# ---------------------------------------------------------------------------
+# GET /api/database
+# ---------------------------------------------------------------------------
+@app.get("/api/database", tags=["database"])
+async def get_database():
+    """Expose the mock database records for UI presentation."""
+    from agent.tools import DatabaseTool
+    tool = DatabaseTool()
+    # tool._records is what we want to expose
+    return {"records": list(tool._records.values())}
+
+# ---------------------------------------------------------------------------
 # WebSocket /ws
 # ---------------------------------------------------------------------------
 @app.websocket("/ws")
