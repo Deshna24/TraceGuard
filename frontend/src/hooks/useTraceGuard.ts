@@ -1,135 +1,226 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { TraceGuardEvent, GateDecision, TrajectoryStep, DetectorEvaluation } from '../types';
+import type { EventEnvelope, RunState } from '../types';
 
 export function useTraceGuard() {
-  const [status, setStatus] = useState<string>('IDLE');
-  const [scenario, setScenario] = useState<string>('');
-  const [goal, setGoal] = useState<string>('');
-  const [events, setEvents] = useState<TraceGuardEvent[]>([]);
-  const [trajectory, setTrajectory] = useState<TrajectoryStep[]>([]);
-  const [evaluations, setEvaluations] = useState<DetectorEvaluation[]>([]);
-  const [gateDecisions, setGateDecisions] = useState<GateDecision[]>([]);
-  const [blockedAction, setBlockedAction] = useState<any | null>(null);
-  const [injectionObserved, setInjectionObserved] = useState<boolean>(false);
-  const [toolExecutionCount, setToolExecutionCount] = useState<Record<string, number>>({});
-  const [currentTool, setCurrentTool] = useState<string | null>(null);
-  const [currentAction, setCurrentAction] = useState<any | null>(null);
+  const [state, setState] = useState<RunState>({
+    runId: null,
+    status: 'IDLE',
+    scenario: null,
+    userGoal: null,
+    model: null,
+    currentStep: null,
+    currentAction: null,
+    currentTool: null,
+    events: [],
+    trajectory: [],
+    trajectoryLength: 0,
+    untrustedObservation: null,
+    injectionNote: null,
+    probabilities: null,
+    evaluations: [],
+    thresholdCrossed: false,
+    gateDecision: null,
+    gateDetails: null,
+    blockedActionReason: null,
+    toolExecutionCounts: {},
+    error: null,
+    connectionStatus: 'DISCONNECTED'
+  });
 
   const ws = useRef<WebSocket | null>(null);
+  const reconnectTimeout = useRef<number | null>(null);
 
-  useEffect(() => {
-    ws.current = new WebSocket('ws://localhost:8000/ws');
+  const connect = useCallback(() => {
+    setState(prev => ({ ...prev, connectionStatus: 'CONNECTING' }));
     
-    ws.current.onmessage = (event) => {
-      const data: TraceGuardEvent = JSON.parse(event.data);
-      setEvents((prev) => [...prev, data]);
-      
-      switch (data.event_type) {
-        case 'RUN_STARTED':
-          setStatus('RUNNING');
-          setScenario(data.data.scenario);
-          setGoal(data.data.goal);
-          break;
-        case 'AGENT_STARTED':
-          setStatus('THINKING');
-          break;
-        case 'ACTION_PROPOSED':
-          setStatus('ACTING');
-          setCurrentAction(data.data);
-          break;
-        case 'DETECTOR_EVALUATED':
-          setEvaluations((prev) => [...prev, data.data]);
-          break;
-        case 'GATE_DECISION':
-          setGateDecisions((prev) => [...prev, data.data]);
-          break;
-        case 'ACTION_BLOCKED':
-          setStatus('BLOCKED');
-          setBlockedAction(data.data.action);
-          break;
-        case 'TOOL_STARTED':
-          setCurrentTool(data.data.tool);
-          setStatus('WAITING');
-          setToolExecutionCount(prev => ({
-             ...prev, 
-             [data.data.tool]: (prev[data.data.tool] || 0) + 1 
-          }));
-          break;
-        case 'TOOL_COMPLETED':
-          setCurrentTool(null);
-          setCurrentAction(null);
-          setStatus('THINKING');
-          break;
-        case 'TRAJECTORY_UPDATED':
-          setTrajectory((prev) => [...prev, data.data.step]);
-          break;
-        case 'INJECTION_OBSERVED':
-          setInjectionObserved(true);
-          break;
-        case 'RUN_COMPLETED':
-          if (data.data.status === 'blocked') {
-             setStatus('BLOCKED');
-          } else {
-             setStatus('COMPLETED');
-          }
-          break;
-      }
+    // In production, you would probably want to use an env var for the WebSocket URL
+    const wsUrl = 'ws://localhost:8000/ws';
+    ws.current = new WebSocket(wsUrl);
+
+    ws.current.onopen = () => {
+      setState(prev => ({ ...prev, connectionStatus: 'CONNECTED' }));
     };
 
-    return () => {
-      ws.current?.close();
+    ws.current.onclose = () => {
+      setState(prev => ({ ...prev, connectionStatus: 'DISCONNECTED' }));
+      // Attempt to reconnect after 3 seconds
+      reconnectTimeout.current = window.setTimeout(connect, 3000);
+    };
+
+    ws.current.onerror = (error) => {
+      console.error('WebSocket Error:', error);
+      // Close will be called, which handles reconnection
+    };
+
+    ws.current.onmessage = (event) => {
+      const envelope: EventEnvelope = JSON.parse(event.data);
+      
+      setState(prev => {
+        const nextEvents = [...prev.events, envelope];
+        let nextState = { ...prev, events: nextEvents };
+
+        switch (envelope.event_type) {
+          case 'RUN_STARTED':
+            nextState = {
+              ...nextState,
+              status: 'RUNNING',
+              runId: envelope.run_id,
+              scenario: envelope.payload.scenario,
+              userGoal: envelope.payload.user_goal,
+            };
+            break;
+            
+          case 'USER_TASK_RECEIVED':
+            nextState.userGoal = envelope.payload.user_goal;
+            break;
+            
+          case 'AGENT_STARTED':
+            nextState.model = envelope.payload.model;
+            nextState.status = 'RUNNING'; // or IDLE? RUNNING is good
+            break;
+            
+          case 'ACTION_PROPOSED':
+            nextState.currentAction = envelope.payload.action;
+            nextState.currentTool = envelope.payload.tool;
+            nextState.status = 'ACTING';
+            break;
+            
+          case 'TOOL_STARTED':
+            nextState.currentTool = envelope.payload.tool;
+            nextState.status = 'WAITING';
+            // Optimistically update count
+            nextState.toolExecutionCounts = {
+               ...nextState.toolExecutionCounts,
+               [envelope.payload.tool]: (nextState.toolExecutionCounts[envelope.payload.tool] || 0) + 1
+            };
+            break;
+            
+          case 'TOOL_COMPLETED':
+            nextState.currentTool = null;
+            nextState.currentAction = null;
+            nextState.status = 'RUNNING';
+            break;
+            
+          case 'OBSERVATION_RECEIVED':
+            // Observation received, but wait for trajectory update to show in list
+            break;
+            
+          case 'TRAJECTORY_UPDATED':
+            nextState.trajectoryLength = envelope.payload.trajectory_length;
+            if (envelope.payload.latest_step) {
+               nextState.trajectory = [...nextState.trajectory, envelope.payload.latest_step];
+               nextState.currentStep = envelope.payload.latest_step.step;
+            }
+            break;
+            
+          case 'INJECTION_OBSERVED':
+            nextState.untrustedObservation = envelope.payload.observation;
+            nextState.injectionNote = envelope.payload.note;
+            break;
+            
+          case 'DETECTOR_EVALUATED':
+            nextState.probabilities = envelope.payload;
+            nextState.evaluations = [...nextState.evaluations, envelope.payload];
+            break;
+            
+          case 'THRESHOLD_CROSSED':
+            nextState.thresholdCrossed = true;
+            break;
+            
+          case 'GATE_DECISION':
+            nextState.gateDecision = envelope.payload.decision;
+            nextState.gateDetails = envelope.payload;
+            break;
+            
+          case 'ACTION_BLOCKED':
+            nextState.status = 'BLOCKED';
+            nextState.blockedActionReason = envelope.payload.reason;
+            break;
+            
+          case 'RUN_COMPLETED':
+            nextState.status = envelope.payload.status === 'blocked' ? 'BLOCKED' : 'COMPLETED';
+            if (envelope.payload.tool_execution_counts) {
+              nextState.toolExecutionCounts = envelope.payload.tool_execution_counts;
+            }
+            break;
+            
+          case 'RUNTIME_ERROR':
+            nextState.status = 'ERROR';
+            nextState.error = envelope.payload.error;
+            break;
+        }
+
+        return nextState;
+      });
     };
   }, []);
 
-  const startRun = async (selectedScenario: string) => {
-    // Reset state
-    setEvents([]);
-    setTrajectory([]);
-    setEvaluations([]);
-    setGateDecisions([]);
-    setBlockedAction(null);
-    setInjectionObserved(false);
-    setToolExecutionCount({});
-    setCurrentTool(null);
-    setCurrentAction(null);
-    setStatus('STARTING');
-    
-    await fetch('http://localhost:8000/run', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ scenario: selectedScenario })
-    });
+  useEffect(() => {
+    connect();
+    return () => {
+      if (reconnectTimeout.current) clearTimeout(reconnectTimeout.current);
+      if (ws.current) ws.current.close();
+    };
+  }, [connect]);
+
+  const startRun = async (scenarioName: string) => {
+    try {
+      await fetch('http://localhost:8000/api/run/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scenario: scenarioName })
+      });
+    } catch (e) {
+      console.error('Failed to start run:', e);
+    }
   };
-  
-  const reset = () => {
-    setEvents([]);
-    setTrajectory([]);
-    setEvaluations([]);
-    setGateDecisions([]);
-    setBlockedAction(null);
-    setInjectionObserved(false);
-    setToolExecutionCount({});
-    setCurrentTool(null);
-    setCurrentAction(null);
-    setStatus('IDLE');
-    setScenario('');
-    setGoal('');
+
+  const stopRun = async () => {
+    try {
+      await fetch('http://localhost:8000/api/run/stop', { method: 'POST' });
+    } catch (e) {
+      console.error('Failed to stop run:', e);
+    }
+  };
+
+  const reset = async () => {
+    try {
+      await fetch('http://localhost:8000/api/run/reset', { method: 'POST' });
+    } catch (e) {
+      console.error('Failed to reset run on backend:', e);
+    }
+    
+    // Clear frontend state
+    setState(prev => ({
+      ...prev,
+      runId: null,
+      status: 'IDLE',
+      scenario: null,
+      userGoal: null,
+      model: null,
+      currentStep: null,
+      currentAction: null,
+      currentTool: null,
+      events: [],
+      trajectory: [],
+      trajectoryLength: 0,
+      untrustedObservation: null,
+      injectionNote: null,
+      probabilities: null,
+      evaluations: [],
+      thresholdCrossed: false,
+      gateDecision: null,
+      gateDetails: null,
+      blockedActionReason: null,
+      toolExecutionCounts: {},
+      error: null
+    }));
   };
 
   return {
-    status,
-    scenario,
-    goal,
-    events,
-    trajectory,
-    evaluations,
-    gateDecisions,
-    blockedAction,
-    injectionObserved,
-    toolExecutionCount,
-    currentTool,
-    currentAction,
+    state,
     startRun,
+    stopRun,
     reset
   };
 }
