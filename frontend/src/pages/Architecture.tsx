@@ -1,4 +1,5 @@
-import ReactFlow, { Background, Controls, Edge, Node, MarkerType } from 'reactflow';
+import ReactFlow, { Background, Controls, MarkerType } from 'reactflow';
+import type { Edge, Node } from 'reactflow';
 import 'reactflow/dist/style.css';
 
 const nodes: Node[] = [

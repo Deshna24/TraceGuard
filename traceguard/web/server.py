@@ -108,7 +108,8 @@ async def start_run(request: RunStartRequest):
     try:
         run = await runtime_manager.start_run(
             scenario=request.scenario,
-            user_goal=get_scenario_info(request.scenario)["user_goal"],
+            user_goal=get_scenario_info(request.scenario, request.custom_goal)["user_goal"],
+            custom_injection=request.custom_injection,
         )
     except RuntimeError as exc:
         return RunStartResponse(
@@ -116,7 +117,10 @@ async def start_run(request: RunStartRequest):
         )
 
     # Launch the scenario in a background task.
-    task = asyncio.create_task(run_scenario(run))
+    if request.scenario == ScenarioName.CUSTOM:
+        task = asyncio.create_task(run_scenario_live(run))
+    else:
+        task = asyncio.create_task(run_scenario(run))
     runtime_manager.set_task(task)
 
     return RunStartResponse(
@@ -138,7 +142,8 @@ async def start_run_live(request: RunStartRequest):
     try:
         run = await runtime_manager.start_run(
             scenario=request.scenario,
-            user_goal=get_scenario_info(request.scenario)["user_goal"],
+            user_goal=get_scenario_info(request.scenario, request.custom_goal)["user_goal"],
+            custom_injection=request.custom_injection,
         )
     except RuntimeError as exc:
         return RunStartResponse(

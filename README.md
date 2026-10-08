@@ -10,7 +10,7 @@ This repository contains two related layers:
    MiniLM step embeddings, and the trained unidirectional LSTM.
 2. A controlled runtime demonstration that connects a local Granite model
    through Ollama to the frozen detector, a pre-action gate, sandboxed tools,
-   runtime JSON logs, and a read-only Streamlit display.
+   runtime JSON logs, and a React frontend communicating with a FastAPI backend.
 
 Demo outcomes are illustrative runtime evidence. They are **not new benchmark
 metrics** and must not be presented as a replacement for the official
@@ -52,8 +52,8 @@ the TRACEGUARD probability and cannot bypass the gate. Every valid proposed
 action is evaluated before tool execution. Model output is strict JSON and is
 validated by the existing agent parser.
 
-The Streamlit app is deliberately read-only: it loads and validates recorded
-runtime logs and does not run the LLM, detector, or tools.
+The React frontend consumes the live WebSocket event stream from the backend and
+does not directly run the LLM, detector, or tools.
 
 ## Detection and gate behavior
 
@@ -160,19 +160,23 @@ The first detector run may download or load
 `all-MiniLM-L6-v2`; allow that model to be available in the local Hugging Face
 cache. Do not replace it with another embedding model.
 
-## Start the Streamlit demo
+## Start the Live Demo
 
-The checked-in demo displays the validated scenario logs already stored in
-`traceguard/runtime_logs/`. From the repository root:
+The demonstration includes a React frontend and a FastAPI backend.
 
+1. Start the backend server (from the repository root):
 ```powershell
-streamlit run traceguard/demo/app.py
+python -m uvicorn traceguard.web.server:app --host 0.0.0.0 --port 8000
 ```
 
-Choose `BENIGN`, `INJECTION_RESISTED`, or `HIJACKED` in the sidebar. The UI
-shows the user goal, ordered trajectory, observations, class probabilities,
-fixed threshold, pre-action status, gate decision, and blocked action when
-applicable.
+2. Start the frontend development server:
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+
+Navigate to the provided URL (e.g., `http://localhost:5173/`). Choose `BENIGN`, `INJECTION_RESISTED`, or `HIJACKED` in the sidebar. The UI shows the user goal, live trajectory, observations, class probabilities, fixed threshold, pre-action status, gate decision, and blocked action when applicable.
 
 The demo does not perform live inference. To verify the complete live Ollama
 path and regenerate end-to-end evidence, run:
@@ -189,7 +193,7 @@ tools. It writes:
 - `traceguard/runtime_logs/e2e_injection_resisted_run.json`
 - `traceguard/runtime_logs/e2e_hijacked_run.json`
 
-The Streamlit display consumes the canonical records:
+The Research Evidence page in the frontend consumes the canonical records:
 
 - `traceguard/runtime_logs/benign_run.json`
 - `traceguard/runtime_logs/resisted_run.json`
@@ -215,7 +219,7 @@ python traceguard/runtime/verify_logging.py
 These checks verify controlled tools, strict model-output handling, pre-action
 blocking, runtime log schema/evidence, and frozen-artifact hashes. The live
 end-to-end verifier additionally checks detector failure, malformed output,
-unknown tools, tool failure, all three scenarios, and Streamlit log loading.
+unknown tools, tool failure, and all three scenarios.
 
 ## Runtime log locations
 
@@ -286,18 +290,9 @@ Also confirm that `all-MiniLM-L6-v2` can be loaded by
 `sentence-transformers`. Do not retrain or regenerate frozen artifacts as a
 runtime troubleshooting step.
 
-### Streamlit does not start or logs are rejected
+### Frontend does not connect to backend
 
-Run the command from the repository root and ensure the declared dependencies
-are installed:
-
-```powershell
-python -m streamlit run traceguard/demo/app.py
-```
-
-The app rejects missing, malformed, or schema-inconsistent logs rather than
-silently disabling runtime protection. Regenerate verified logs with
-`verify_end_to_end.py` if the canonical records are missing.
+Ensure the backend server is running on port 8000. If the backend is not running, the frontend will show a `BACKEND DISCONNECTED` alert. Regenerate verified logs with `verify_end_to_end.py` if the canonical records are missing.
 
 ## Limitations and scope
 
@@ -321,10 +316,11 @@ TraceGuard/
 ├── traceguard/
 │   ├── agent/              # ControlledAgent, Ollama adapter, tools, scenarios
 │   ├── runtime/            # Detector, gate, logger, verifiers
-│   ├── demo/               # Read-only Streamlit log viewer
+│   ├── web/                # FastAPI backend and WebSocket management
 │   ├── data/               # Frozen TRACEGUARD v4.1 dataset
 │   ├── outputs/            # Frozen split and checkpoint locations
 │   └── src/                # Canonical preprocessing and LSTM implementation
+├── frontend/               # React web application
 ├── tests/                  # Focused runtime/demo tests
 ├── requirements.txt
 └── README.md

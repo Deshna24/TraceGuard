@@ -61,6 +61,7 @@ export interface RunState {
   gateDecision: 'ALLOW' | 'BLOCK' | null;
   gateDetails: any | null;
   blockedActionReason: string | null;
+  finalAnswer: string | null;
   toolExecutionCounts: Record<string, number>;
   error: string | null;
   connectionStatus: 'DISCONNECTED' | 'CONNECTING' | 'CONNECTED';

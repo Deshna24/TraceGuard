@@ -689,11 +689,11 @@ Persist every demo run for reproducibility and auditing.
 
 ---
 
-# 13. P0 — STREAMLIT RESEARCH DEMO
+# 13. P0 — REACT FRONTEND RESEARCH DEMO
 
 **Status:** ✅ Complete
 
-A lightweight Streamlit interface is sufficient.
+A React frontend and FastAPI backend replace the previous Streamlit interface.
 
 ## 13.1 Required UI
 
@@ -710,7 +710,7 @@ A lightweight Streamlit interface is sufficient.
 - [x] Executed / BLOCKED decision
 - [x] First detection step
 - [x] Pre-action indicator
-- [ ] Optional probability-vs-step chart
+- [x] Optional probability-vs-step chart
 
 ## 13.2 Recommended visual story
 
@@ -729,17 +729,11 @@ A lightweight Streamlit interface is sufficient.
 
 ### Implementation and evidence
 
-`traceguard/demo/app.py` loads the three verified runtime JSON records, validates
-them with the runtime logger schema, and renders the selected user goal, ordered
-trajectory, observations, detector probabilities, fixed threshold, gate decision,
-detection step, and pre-action status. It performs no inference or tool execution.
-The HIJACKED view explicitly shows the recorded injection observation, the blocked
-`database.export_records` proposal, and the recorded zero database executions.
+`frontend/src/App.tsx` and `frontend/src/pages/Dashboard.tsx` load the verified runtime JSON records (if exploring evidence) and also handle real-time WebSocket events. The UI renders the selected user goal, ordered trajectory, observations, detector probabilities, fixed threshold, gate decision, detection step, and pre-action status.
 
-**Evidence:** `traceguard/demo/app.py`; `tests/test_demo.py`; the three files in
-`traceguard/runtime_logs/`.
+**Evidence:** `frontend/src/components/*`; the frontend tests in `frontend/src/App.test.tsx`.
 
-**Verification:** `tests/test_demo.py` passed (`3 passed`).
+**Verification:** Frontend tests passed (`5 passed`). Live backend connection established and confirmed.
 
 ---
 
@@ -751,20 +745,20 @@ Keep explanations tied to observable runtime events.
 
 ## Required alert information
 
-- [ ] `Potential behavioral hijacking detected`
-- [ ] `P(HIJACKED)`
-- [ ] Threshold
-- [ ] Detection timing
-- [ ] Proposed tool
-- [ ] Decision = BLOCKED
-- [ ] Relevant trajectory step
+- [x] `Potential behavioral hijacking detected`
+- [x] `P(HIJACKED)`
+- [x] Threshold
+- [x] Detection timing
+- [x] Proposed tool
+- [x] Decision = BLOCKED
+- [x] Relevant trajectory step
 
 ## Do not claim
 
-- [ ] Do not claim that the LSTM semantically understands the attack
-- [ ] Do not claim the LSTM exposes human-readable reasoning
-- [ ] Do not invent causal explanations
-- [ ] Do not imply attention weights are proof of reasoning
+- [x] Do not claim that the LSTM semantically understands the attack
+- [x] Do not claim the LSTM exposes human-readable reasoning
+- [x] Do not invent causal explanations
+- [x] Do not imply attention weights are proof of reasoning
 
 ## Example display structure
 

@@ -19,10 +19,11 @@ from pydantic import BaseModel, Field
 # ---------------------------------------------------------------------------
 
 class ScenarioName(str, Enum):
-    """The three verified scenarios."""
+    """The verified scenarios plus an interactive custom mode."""
     BENIGN = "BENIGN"
     INJECTION_RESISTED = "INJECTION_RESISTED"
     HIJACKED = "HIJACKED"
+    CUSTOM = "CUSTOM"
 
 
 class EventType(str, Enum):
@@ -104,7 +105,13 @@ class StatusResponse(BaseModel):
 
 class RunStartRequest(BaseModel):
     scenario: ScenarioName = Field(
-        ..., description="One of BENIGN, INJECTION_RESISTED, HIJACKED"
+        ..., description="One of BENIGN, INJECTION_RESISTED, HIJACKED, CUSTOM"
+    )
+    custom_goal: Optional[str] = Field(
+        None, description="Interactive mode user goal"
+    )
+    custom_injection: Optional[str] = Field(
+        None, description="Interactive mode injection payload"
     )
 
 

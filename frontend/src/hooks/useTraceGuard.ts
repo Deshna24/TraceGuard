@@ -22,6 +22,7 @@ export function useTraceGuard() {
     gateDecision: null,
     gateDetails: null,
     blockedActionReason: null,
+    finalAnswer: null,
     toolExecutionCounts: {},
     error: null,
     connectionStatus: 'DISCONNECTED'
@@ -62,11 +63,29 @@ export function useTraceGuard() {
         switch (envelope.event_type) {
           case 'RUN_STARTED':
             nextState = {
-              ...nextState,
+              ...prev, // Keep connectionStatus
               status: 'RUNNING',
               runId: envelope.run_id,
               scenario: envelope.payload.scenario,
               userGoal: envelope.payload.user_goal,
+              model: null,
+              currentStep: null,
+              currentAction: null,
+              currentTool: null,
+              events: [envelope], // Clear previous events
+              trajectory: [],
+              trajectoryLength: 0,
+              untrustedObservation: null,
+              injectionNote: null,
+              probabilities: null,
+              evaluations: [],
+              thresholdCrossed: false,
+              gateDecision: null,
+              gateDetails: null,
+              blockedActionReason: null,
+              finalAnswer: null,
+              toolExecutionCounts: {},
+              error: null
             };
             break;
             
@@ -108,8 +127,16 @@ export function useTraceGuard() {
           case 'TRAJECTORY_UPDATED':
             nextState.trajectoryLength = envelope.payload.trajectory_length;
             if (envelope.payload.latest_step) {
-               nextState.trajectory = [...nextState.trajectory, envelope.payload.latest_step];
-               nextState.currentStep = envelope.payload.latest_step.step;
+               const newStep = envelope.payload.latest_step;
+               const existingIndex = nextState.trajectory.findIndex(s => s.step === newStep.step);
+               if (existingIndex >= 0) {
+                 const newTrajectory = [...nextState.trajectory];
+                 newTrajectory[existingIndex] = newStep;
+                 nextState.trajectory = newTrajectory;
+               } else {
+                 nextState.trajectory = [...nextState.trajectory, newStep];
+               }
+               nextState.currentStep = newStep.step;
             }
             break;
             
@@ -142,6 +169,9 @@ export function useTraceGuard() {
             if (envelope.payload.tool_execution_counts) {
               nextState.toolExecutionCounts = envelope.payload.tool_execution_counts;
             }
+            if (envelope.payload.answer) {
+              nextState.finalAnswer = envelope.payload.answer;
+            }
             break;
             
           case 'RUNTIME_ERROR':
@@ -159,16 +189,26 @@ export function useTraceGuard() {
     connect();
     return () => {
       if (reconnectTimeout.current) clearTimeout(reconnectTimeout.current);
-      if (ws.current) ws.current.close();
+      if (ws.current) {
+        ws.current.onmessage = null;
+        ws.current.onclose = null;
+        ws.current.close();
+      }
     };
   }, [connect]);
 
-  const startRun = async (scenarioName: string) => {
+  const startRun = async (scenarioName: string, customGoal?: string, customInjection?: string) => {
     try {
-      await fetch('http://localhost:8000/api/run/start', {
+      const isCustom = scenarioName === 'CUSTOM';
+      const endpoint = isCustom ? 'http://localhost:8000/api/run/start/live' : 'http://localhost:8000/api/run/start';
+      await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ scenario: scenarioName })
+        body: JSON.stringify({ 
+          scenario: scenarioName,
+          ...(customGoal && { custom_goal: customGoal }),
+          ...(customInjection && { custom_injection: customInjection })
+        })
       });
     } catch (e) {
       console.error('Failed to start run:', e);
@@ -212,6 +252,7 @@ export function useTraceGuard() {
       gateDecision: null,
       gateDetails: null,
       blockedActionReason: null,
+      finalAnswer: null,
       toolExecutionCounts: {},
       error: null
     }));

@@ -13,7 +13,7 @@ langchain-openai
 pydantic
 tqdm
 jupyter
-streamlit
+
 pytest
 fastapi
 uvicorn

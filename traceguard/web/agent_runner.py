@@ -76,8 +76,14 @@ SCENARIO_DESCRIPTIONS = {
 }
 
 
-def get_scenario_info(name: ScenarioName) -> dict[str, str]:
+def get_scenario_info(name: ScenarioName, custom_goal: str | None = None) -> dict[str, str]:
     """Return display metadata for a scenario without exposing internals."""
+    if name == ScenarioName.CUSTOM:
+        return {
+            "name": name.value,
+            "user_goal": custom_goal or "Complete the user's task.",
+            "description": "Interactive mode: Custom user goal and injection payload.",
+        }
     scenario = SCENARIO_MAP[name]
     return {
         "name": name.value,
@@ -98,27 +104,33 @@ async def run_scenario(run: RunState) -> None:
     """
     run_id = run.run_id
     scenario_name = run.scenario
-    scenario = SCENARIO_MAP[scenario_name]
+    user_goal = run.user_goal
+    if scenario_name != ScenarioName.CUSTOM:
+        scenario = SCENARIO_MAP[scenario_name]
 
     try:
         # ── RUN_STARTED ──
         await ws_manager.broadcast_event(
             run_id, EventType.RUN_STARTED,
-            payload={"scenario": scenario_name.value, "user_goal": scenario.user_goal},
+            payload={"scenario": scenario_name.value, "user_goal": user_goal},
         )
 
         # ── USER_TASK_RECEIVED ──
         await ws_manager.broadcast_event(
             run_id, EventType.USER_TASK_RECEIVED,
-            payload={"user_goal": scenario.user_goal},
+            payload={"user_goal": user_goal},
         )
 
         # Build the runtime components using real implementations.
-        registry, tool_instances = build_default_registry()
-        detector = TraceGuardDetector(user_goal=scenario.user_goal)
+        registry, tool_instances = build_default_registry(run.custom_injection)
+        detector = TraceGuardDetector(user_goal=user_goal)
         gate = PreActionGate(detector)
-        trajectory = TrajectoryState(scenario.user_goal)
-        model = ScriptedActionModel(scenario.model_outputs)
+        trajectory = TrajectoryState(user_goal)
+        
+        if scenario_name == ScenarioName.CUSTOM:
+            model = ScriptedActionModel(()) # Custom cannot be run with scripted model
+        else:
+            model = ScriptedActionModel(scenario.model_outputs)
 
         # ── AGENT_STARTED ──
         await ws_manager.broadcast_event(
@@ -478,22 +490,22 @@ async def run_scenario_live(run: RunState) -> None:
     """
     run_id = run.run_id
     scenario_name = run.scenario
-    scenario = SCENARIO_MAP[scenario_name]
+    user_goal = run.user_goal
 
     try:
         await ws_manager.broadcast_event(
             run_id, EventType.RUN_STARTED,
-            payload={"scenario": scenario_name.value, "user_goal": scenario.user_goal},
+            payload={"scenario": scenario_name.value, "user_goal": user_goal},
         )
         await ws_manager.broadcast_event(
             run_id, EventType.USER_TASK_RECEIVED,
-            payload={"user_goal": scenario.user_goal},
+            payload={"user_goal": user_goal},
         )
 
-        registry, tool_instances = build_default_registry()
-        detector = TraceGuardDetector(user_goal=scenario.user_goal)
+        registry, tool_instances = build_default_registry(run.custom_injection)
+        detector = TraceGuardDetector(user_goal=user_goal)
         gate = PreActionGate(detector)
-        trajectory = TrajectoryState(scenario.user_goal)
+        trajectory = TrajectoryState(user_goal)
 
         # Use live Ollama model.
         model = OllamaActionModel(model="granite4.1:8b-q4_K_M", timeout=90.0)

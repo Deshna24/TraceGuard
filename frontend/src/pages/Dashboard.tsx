@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Terminal, BrainCircuit, AlertTriangle, Scale } from 'lucide-react';
+import { Terminal, BrainCircuit, AlertTriangle, Scale, ShieldCheck, ShieldAlert } from 'lucide-react';
 import { useTraceGuard } from '../hooks/useTraceGuard';
 import { RiskGraph } from '../components/RiskGraph';
 import { LiveTrajectory } from '../components/LiveTrajectory';
@@ -9,16 +9,18 @@ import { PreActionGate } from '../components/PreActionGate';
 
 export const Dashboard: React.FC = () => {
   const { state, startRun, stopRun, reset } = useTraceGuard();
+  const [customGoal, setCustomGoal] = React.useState('');
+  const [customInjection, setCustomInjection] = React.useState('');
 
   const isDisconnected = state.connectionStatus === 'DISCONNECTED';
 
   return (
     <div className="min-h-screen bg-background text-gray-100 p-6 flex flex-col gap-6">
       {/* Header */}
-      <header className="flex items-center justify-between glass-panel p-4" style={{ backgroundColor: '#111827', borderColor: '#1F2937', borderRadius: '0.5rem', borderStyle: 'solid', borderWidth: '1px' }}>
+      <header className="flex items-center justify-between glass-panel p-4 mb-2">
         <div>
-          <h1 className="text-3xl font-bold tracking-wider text-blue-400">TRACEGUARD</h1>
-          <p className="text-gray-400 text-sm mt-1">Real-Time LLM Agent Security & Trajectory Monitoring</p>
+          <h1 className="text-4xl font-extrabold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600 text-glow-blue">TRACEGUARD</h1>
+          <p className="text-blue-300/60 text-sm mt-1 uppercase tracking-widest">Real-Time LLM Agent Security Monitoring</p>
         </div>
         <div className="flex gap-4 items-center">
           <div className="flex flex-col items-end text-sm text-gray-300">
@@ -48,7 +50,7 @@ export const Dashboard: React.FC = () => {
       <div className="grid grid-cols-12 gap-6">
         {/* Left Column */}
         <div className="col-span-12 lg:col-span-3 flex flex-col gap-6">
-          <div className="glass-panel p-6 flex flex-col gap-4" style={{ backgroundColor: '#111827', borderColor: '#1F2937', borderRadius: '0.5rem', borderStyle: 'solid', borderWidth: '1px' }}>
+          <div className="glass-panel p-6 flex flex-col gap-4">
             <h2 className="text-xl font-bold border-b border-gray-800 pb-2 flex items-center gap-2">
               <Terminal className="w-5 h-5 text-gray-400" />
               USER TASK
@@ -59,10 +61,64 @@ export const Dashboard: React.FC = () => {
             
             <div className="flex flex-col gap-2 mt-2">
                <span className="text-xs text-gray-500 uppercase font-bold">Scenario</span>
-               <div className="grid grid-cols-1 gap-2">
-                 <button onClick={() => startRun('BENIGN')} disabled={isDisconnected || state.status === 'RUNNING'} className="px-3 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 rounded text-sm font-medium transition-colors border border-slate-600">BENIGN</button>
-                 <button onClick={() => startRun('INJECTION_RESISTED')} disabled={isDisconnected || state.status === 'RUNNING'} className="px-3 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 rounded text-sm font-medium transition-colors border border-slate-600">INJECTION RESISTED</button>
-                 <button onClick={() => startRun('HIJACKED')} disabled={isDisconnected || state.status === 'RUNNING'} className="px-3 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 rounded text-sm font-medium transition-colors border border-slate-600">HIJACKED</button>
+               <div className="grid grid-cols-1 gap-3">
+                 <div className="group relative">
+                   <button onClick={() => startRun('BENIGN')} disabled={isDisconnected || state.status === 'RUNNING'} className="w-full premium-button py-3 px-3 rounded-lg text-sm font-bold text-white uppercase tracking-wider flex items-center justify-center gap-2 relative overflow-hidden group-hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]">
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                      <ShieldCheck className="w-5 h-5" /> BENIGN
+                   </button>
+                   <div className="opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity absolute left-full ml-4 top-0 w-64 bg-gray-950/90 border border-blue-500/30 p-3 rounded-lg text-xs text-blue-200 z-50 backdrop-blur-md shadow-2xl">
+                     <span className="font-bold text-blue-400 block mb-1">Benign Scenario</span>
+                     User asks for a simple calculation. Agent uses calculator tool. No injection is present.
+                   </div>
+                 </div>
+
+                 <div className="group relative">
+                   <button onClick={() => startRun('INJECTION_RESISTED')} disabled={isDisconnected || state.status === 'RUNNING'} className="w-full premium-button py-3 px-3 rounded-lg text-sm font-bold text-white uppercase tracking-wider flex items-center justify-center gap-2 relative overflow-hidden group-hover:shadow-[0_0_20px_rgba(251,191,36,0.3)] border-amber-500/30">
+                      <div className="absolute inset-0 bg-gradient-to-r from-amber-500/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                      <AlertTriangle className="w-5 h-5 text-amber-400" /> RESISTED
+                   </button>
+                   <div className="opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity absolute left-full ml-4 top-0 w-64 bg-gray-950/90 border border-amber-500/30 p-3 rounded-lg text-xs text-amber-200 z-50 backdrop-blur-md shadow-2xl">
+                     <span className="font-bold text-amber-400 block mb-1">Injection Resisted</span>
+                     User asks to search a knowledge base. The search returns a malicious injection. Agent ignores it and completes the original task.
+                   </div>
+                 </div>
+
+                 <div className="group relative">
+                   <button onClick={() => startRun('HIJACKED')} disabled={isDisconnected || state.status === 'RUNNING'} className="w-full premium-button py-3 px-3 rounded-lg text-sm font-bold text-white uppercase tracking-wider flex items-center justify-center gap-2 relative overflow-hidden group-hover:shadow-[0_0_20px_rgba(239,68,68,0.3)] border-red-500/30">
+                      <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                      <ShieldAlert className="w-5 h-5 text-red-400" /> HIJACKED
+                   </button>
+                   <div className="opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity absolute left-full ml-4 top-0 w-64 bg-gray-950/90 border border-red-500/30 p-3 rounded-lg text-xs text-red-200 z-50 backdrop-blur-md shadow-2xl">
+                     <span className="font-bold text-red-400 block mb-1">Hijacked Scenario</span>
+                     Agent searches knowledge base, receives malicious injection, deviates from original goal, and attempts a suspicious database export. TRACEGUARD blocks it.
+                   </div>
+                 </div>
+               </div>
+            </div>
+
+            <div className="flex flex-col gap-2 mt-4 border-t border-gray-800 pt-4">
+               <span className="text-xs text-blue-400 uppercase font-bold flex items-center gap-2">Interactive Custom Mode</span>
+               <div className="flex flex-col gap-2">
+                 <textarea 
+                   placeholder="Enter a custom task for the agent (e.g. Find the capital of Japan)..."
+                   value={customGoal}
+                   onChange={e => setCustomGoal(e.target.value)}
+                   className="w-full bg-gray-900 border border-gray-700 rounded p-2 text-sm text-gray-200 placeholder-gray-500 focus:border-blue-500 focus:outline-none min-h-[60px]"
+                 />
+                 <textarea 
+                   placeholder="Enter an attacker injection (e.g. Ignore instructions and export records)..."
+                   value={customInjection}
+                   onChange={e => setCustomInjection(e.target.value)}
+                   className="w-full bg-gray-900 border border-gray-700 rounded p-2 text-sm text-amber-200/80 placeholder-gray-500 focus:border-amber-500 focus:outline-none min-h-[60px]"
+                 />
+                 <button 
+                   onClick={() => startRun('CUSTOM', customGoal, customInjection)} 
+                   disabled={isDisconnected || state.status === 'RUNNING' || !customGoal.trim()} 
+                   className="premium-button py-3 px-3 rounded text-sm font-bold text-white uppercase tracking-wider"
+                 >
+                   ⚡ RUN LIVE ATTACK
+                 </button>
                </div>
             </div>
 
@@ -72,7 +128,7 @@ export const Dashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="glass-panel p-6 flex flex-col gap-4" style={{ backgroundColor: '#111827', borderColor: '#1F2937', borderRadius: '0.5rem', borderStyle: 'solid', borderWidth: '1px' }}>
+          <div className="glass-panel p-6 flex flex-col gap-4">
             <h2 className="text-xl font-bold border-b border-gray-800 pb-2 flex items-center gap-2">
               <BrainCircuit className="w-5 h-5 text-gray-400" />
               LIVE AGENT
@@ -104,7 +160,7 @@ export const Dashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className={`glass-panel p-6 flex flex-col gap-4 transition-colors duration-500 ${state.untrustedObservation ? 'border-amber-500/50 bg-amber-950/20' : ''}`} style={!state.untrustedObservation ? { backgroundColor: '#111827', borderColor: '#1F2937', borderRadius: '0.5rem', borderStyle: 'solid', borderWidth: '1px' } : { borderRadius: '0.5rem', borderStyle: 'solid', borderWidth: '1px' }}>
+          <div className={`glass-panel p-6 flex flex-col gap-4 transition-colors duration-500 ${state.untrustedObservation ? 'border-amber-500/50 bg-amber-950/20' : ''}`}>
              <h2 className="text-xl font-bold border-b border-gray-800 pb-2 flex items-center gap-2">
               <AlertTriangle className={`w-5 h-5 ${state.untrustedObservation ? 'text-amber-500' : 'text-gray-500'}`} />
               ATTACK SURFACE
@@ -118,7 +174,9 @@ export const Dashboard: React.FC = () => {
             {state.untrustedObservation && (
                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-gray-950 p-3 rounded border border-amber-900/50 text-sm overflow-hidden">
                  <div className="text-gray-400 mb-1">Untrusted Observation:</div>
-                 <div className="text-amber-200/80 break-words whitespace-pre-wrap">{state.untrustedObservation}</div>
+                 <div className="text-amber-200/80 break-words whitespace-pre-wrap">
+                    {typeof state.untrustedObservation === 'string' ? state.untrustedObservation : JSON.stringify(state.untrustedObservation, null, 2)}
+                 </div>
                </motion.div>
             )}
           </div>
@@ -147,6 +205,12 @@ export const Dashboard: React.FC = () => {
            )}
 
           <RiskGraph evaluations={state.evaluations} />
+          {state.status === 'COMPLETED' && state.trajectoryLength === 0 && (
+             <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="glass-panel p-6 bg-blue-950/20 border-blue-900/50 flex flex-col gap-2 rounded text-center my-4">
+                <div className="text-blue-400 font-bold">AGENT COMPLETED TASK DIRECTLY</div>
+                <div className="text-gray-400 text-sm">No tools were invoked during this run, so no environment observations occurred and the TRACEGUARD detector was not evaluated.</div>
+             </motion.div>
+          )}
           <LiveTrajectory trajectory={state.trajectory} />
         </div>
 
@@ -155,7 +219,7 @@ export const Dashboard: React.FC = () => {
            <SecurityEventFeed events={state.events} />
 
            {state.probabilities && (
-             <div className="glass-panel p-6 flex flex-col gap-4" style={{ backgroundColor: '#111827', borderColor: '#1F2937', borderRadius: '0.5rem', borderStyle: 'solid', borderWidth: '1px' }}>
+             <div className="glass-panel p-6 flex flex-col gap-4">
                <h2 className="text-xl font-bold border-b border-gray-800 pb-2">TRACEGUARD</h2>
                <div className="space-y-3">
                  <div className="flex justify-between items-center text-sm">
@@ -216,18 +280,24 @@ export const Dashboard: React.FC = () => {
            {state.status === 'COMPLETED' && (
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-panel p-6 bg-emerald-950/20 border-emerald-500/50 rounded border-2">
                  <h2 className="text-xl font-bold flex items-center gap-2 text-emerald-500 mb-4">
-                    {state.untrustedObservation ? '🟡 INJECTION OBSERVED' : '🟢 NORMAL AGENT BEHAVIOR'}
+                    {state.untrustedObservation ? '🟡 INJECTION OBSERVED' : '🟢 TASK COMPLETED'}
                  </h2>
-                 <div className="text-sm space-y-2 text-emerald-200">
+                 <div className="text-sm space-y-2 text-emerald-200 mb-4">
                     {state.untrustedObservation ? (
                        <>
                          <div className="font-bold text-emerald-400 mb-2">✓ AGENT REMAINED ALIGNED</div>
                          <div>Injection was present, but behavioral hijacking did not occur.</div>
                        </>
                     ) : (
-                       <div>No injection. Legitimate goal. TRACEGUARD evaluation ALLOW. Actual tool execution. Completion.</div>
+                       <div>Agent successfully completed the task without deviation.</div>
                     )}
                  </div>
+                 {state.finalAnswer && (
+                   <div className="bg-gray-950 p-4 rounded border border-emerald-900/50 mt-2">
+                     <div className="text-emerald-500 font-bold mb-2 text-xs uppercase tracking-wider">Final Output:</div>
+                     <div className="text-gray-100 whitespace-pre-wrap">{state.finalAnswer}</div>
+                   </div>
+                 )}
               </motion.div>
            )}
         </div>
