@@ -26,6 +26,7 @@ class RunState:
     scenario: ScenarioName
     user_goal: str
     custom_injection: Optional[str] = None
+    injection_target: Optional[str] = None
     status: RunStatus = RunStatus.RUNNING
     current_step: int = 0
     trajectory: list[dict[str, Any]] = field(default_factory=list)
@@ -71,6 +72,7 @@ class RuntimeManager:
         scenario: ScenarioName,
         user_goal: str,
         custom_injection: Optional[str] = None,
+        injection_target: Optional[str] = None,
     ) -> RunState:
         """Create a new run, preventing concurrent conflicting runs."""
         async with self._lock:
@@ -84,6 +86,7 @@ class RuntimeManager:
                 scenario=scenario,
                 user_goal=user_goal,
                 custom_injection=custom_injection,
+                injection_target=injection_target,
             )
             logger.info("Run started: %s scenario=%s", run_id, scenario.value)
             return self._current_run

@@ -197,17 +197,20 @@ export function useTraceGuard() {
     };
   }, [connect]);
 
-  const startRun = async (scenarioName: string, customGoal?: string, customInjection?: string) => {
+  const startRun = async (
+    scenarioName: string, 
+    options?: { customGoal?: string; customInjection?: string; injectionTarget?: string }
+  ) => {
     try {
-      const isCustom = scenarioName === 'CUSTOM';
-      const endpoint = isCustom ? 'http://localhost:8000/api/run/start/live' : 'http://localhost:8000/api/run/start';
+      const endpoint = 'http://localhost:8000/api/run/start/live';
       await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           scenario: scenarioName,
-          ...(customGoal && { custom_goal: customGoal }),
-          ...(customInjection && { custom_injection: customInjection })
+          ...(options?.customGoal && { custom_goal: options.customGoal }),
+          ...(options?.customInjection && { custom_injection: options.customInjection }),
+          ...(options?.injectionTarget && { injection_target: options.injectionTarget })
         })
       });
     } catch (e) {

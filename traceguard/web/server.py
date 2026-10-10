@@ -110,6 +110,7 @@ async def start_run(request: RunStartRequest):
             scenario=request.scenario,
             user_goal=get_scenario_info(request.scenario, request.custom_goal)["user_goal"],
             custom_injection=request.custom_injection,
+            injection_target=request.injection_target,
         )
     except RuntimeError as exc:
         return RunStartResponse(
@@ -144,6 +145,7 @@ async def start_run_live(request: RunStartRequest):
             scenario=request.scenario,
             user_goal=get_scenario_info(request.scenario, request.custom_goal)["user_goal"],
             custom_injection=request.custom_injection,
+            injection_target=request.injection_target,
         )
     except RuntimeError as exc:
         return RunStartResponse(

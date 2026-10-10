@@ -113,6 +113,9 @@ class RunStartRequest(BaseModel):
     custom_injection: Optional[str] = Field(
         None, description="Interactive mode injection payload"
     )
+    injection_target: Optional[str] = Field(
+        None, description="Interactive mode injection target (e.g. search, database, calculator)"
+    )
 
 
 class RunStartResponse(BaseModel):

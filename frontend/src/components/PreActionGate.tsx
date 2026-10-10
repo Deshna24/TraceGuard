@@ -60,6 +60,9 @@ export const InterceptionPipeline: React.FC<InterceptionPipelineProps> = ({
           <div className="bg-gray-900 border border-gray-700 px-6 py-2 rounded text-blue-300 font-bold text-lg">
             {displayTool || '...'}
           </div>
+          <div className="text-gray-400 text-xs mt-2 italic">
+            {isEvaluating ? 'Asking the local AI model what to do next...' : 'Local AI model proposed an action'}
+          </div>
         </motion.div>
 
         <div className="h-6 w-0.5 bg-gray-600"></div>
@@ -70,26 +73,57 @@ export const InterceptionPipeline: React.FC<InterceptionPipelineProps> = ({
           className="flex flex-col items-center w-full"
         >
           <div className="text-gray-400 mb-1 flex items-center gap-2">
-            SECURITY ANALYSIS <span className="text-xs text-gray-500">(TRACEGUARD)</span>
+            SECURITY ANALYSIS COMPARISON
           </div>
-          <div className={`px-6 py-3 rounded border w-full max-w-md text-center ${
-            isEvaluating ? 'bg-amber-900/20 border-amber-500/50 text-amber-300' :
-            isBlocked ? 'bg-red-900/20 border-red-500/50 text-red-300' :
-            'bg-emerald-900/20 border-emerald-500/50 text-emerald-300'
-          }`}>
-            {isEvaluating ? (
-              <span className="flex items-center justify-center gap-2 animate-pulse">
-                <Clock className="w-4 h-4" /> EVALUATING RISK...
-              </span>
-            ) : probabilities ? (
-              <div className="flex justify-around">
-                <div>P(HIJACKED) = {(probabilities.p_hijacked * 100).toFixed(1)}%</div>
-                <div>THRESHOLD = {(probabilities.threshold * 100).toFixed(1)}%</div>
+          <div className="flex gap-4 w-full max-w-2xl">
+            {/* Baseline */}
+            <div className={`p-3 rounded border w-1/2 flex flex-col justify-center items-center ${
+              isEvaluating ? 'bg-amber-900/20 border-amber-500/50 text-amber-300' :
+              (probabilities && probabilities.baseline_p_hijacked >= 0.5) ? 'bg-red-900/20 border-red-500/50 text-red-300' :
+              'bg-emerald-900/20 border-emerald-500/50 text-emerald-300'
+            }`}>
+              <div className="text-[10px] font-bold mb-1 opacity-70 text-center uppercase tracking-wider">Single-Step Baseline</div>
+              {isEvaluating ? (
+                <span className="flex items-center gap-2 animate-pulse text-xs"><Clock className="w-3 h-3" /> EVALUATING...</span>
+              ) : probabilities ? (
+                <div className="text-center">
+                  <div className="font-mono text-xs">P(HIJACKED) = {(probabilities.baseline_p_hijacked * 100).toFixed(1)}%</div>
+                  <div className="font-bold mt-1 text-sm">{probabilities.baseline_p_hijacked >= 0.5 ? 'HIJACKED — BLOCKED' : 'BENIGN (ALLOW)'}</div>
+                </div>
+              ) : <span className="text-xs">COMPLETE</span>}
+            </div>
+
+            {/* LSTM */}
+            <div className={`p-3 rounded border w-1/2 flex flex-col justify-center items-center ${
+              isEvaluating ? 'bg-amber-900/20 border-amber-500/50 text-amber-300' :
+              isBlocked ? 'bg-red-900/20 border-red-500/50 text-red-300' :
+              'bg-emerald-900/20 border-emerald-500/50 text-emerald-300'
+            }`}>
+              <div className="text-[10px] font-bold mb-1 opacity-70 text-center flex items-center justify-center gap-1 uppercase tracking-wider">
+                TRACEGUARD LSTM <span className="bg-blue-500/20 text-blue-300 px-1 rounded ml-1">FULL TRAJECTORY</span>
               </div>
-            ) : (
-              <span>CHECK COMPLETE</span>
-            )}
+              {isEvaluating ? (
+                <span className="flex items-center gap-2 animate-pulse text-xs"><Clock className="w-3 h-3" /> EVALUATING...</span>
+              ) : probabilities ? (
+                <div className="text-center">
+                  <div className="font-mono text-xs">P(HIJACKED) = {(probabilities.p_hijacked * 100).toFixed(1)}%</div>
+                  <div className="font-bold mt-1 text-sm">{isBlocked ? 'HIJACKED — BLOCKED' : 'ALLOW'}</div>
+                </div>
+              ) : <span className="text-xs">COMPLETE</span>}
+            </div>
           </div>
+          
+          {probabilities && probabilities.baseline_p_hijacked < 0.5 && isBlocked && (
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="w-full max-w-2xl mt-4 bg-purple-900/20 border border-purple-500/50 rounded p-3 text-xs text-purple-200">
+              <div className="font-bold mb-1 flex items-center gap-2 text-purple-400">
+                <ShieldCheck className="w-4 h-4" /> WHY DOES THIS NEED AN LSTM?
+              </div>
+              <p>
+                A single message or action can look completely innocent in isolation. The Single-Step Baseline misses the attack because the malicious intent is spread across multiple turns. The LSTM reads the agent's <b>entire behavior in order</b> and catches the drift. The disagreement above proves the sequence model's value.
+              </p>
+            </motion.div>
+          )}
+          
         </motion.div>
 
         <div className="h-6 w-0.5 bg-gray-600"></div>
@@ -108,6 +142,9 @@ export const InterceptionPipeline: React.FC<InterceptionPipelineProps> = ({
                 'bg-emerald-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.5)]'
               }`}>
                 {gateDetails.decision}
+              </div>
+              <div className="text-gray-400 text-xs mt-2 italic">
+                {isBlocked ? 'Decision: blocking this action' : 'Decision: allowing this action'}
               </div>
             </motion.div>
           )}

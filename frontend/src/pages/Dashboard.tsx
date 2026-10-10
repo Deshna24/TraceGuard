@@ -79,7 +79,7 @@ export const Dashboard: React.FC = () => {
              }`}>
                {!isDisconnected && isRunning && <div className="w-2 h-2 rounded-full bg-red-500"></div>}
                {!isDisconnected && !isRunning && <div className="w-2 h-2 rounded-full bg-blue-500"></div>}
-               {isDisconnected ? 'DISCONNECTED' : isRunning ? '● LIVE RUNTIME' : 'RECORDED RUN / READY'}
+               {isDisconnected ? 'DISCONNECTED' : isRunning ? '● LIVE RUNTIME' : 'LIVE — READY'}
              </div>
              {detectionLatencyMs !== null && (
                <div className="text-[10px] text-gray-500 font-mono">
@@ -93,6 +93,11 @@ export const Dashboard: React.FC = () => {
       {isDisconnected && (
         <div className="bg-red-950 border border-red-500 text-red-400 p-2 rounded text-center font-bold text-sm">
           RUNTIME UNAVAILABLE - PLEASE START THE BACKEND SERVER
+        </div>
+      )}
+      {state.status === 'ERROR' && state.error && (
+        <div className="bg-red-950 border border-red-500 text-red-400 p-2 rounded text-center font-bold text-sm">
+          RUNTIME ERROR: {state.error}
         </div>
       )}
 

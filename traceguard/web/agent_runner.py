@@ -24,6 +24,7 @@ from typing import Any
 
 from runtime.action_gate import GateDecision, PreActionGate, ProposedAction
 from runtime.detector import TraceGuardDetector
+from runtime.baseline import SingleStepBaseline
 from runtime.logger import DEFAULT_LOG_DIRECTORY, build_run_log, write_run_log
 from runtime.trajectory import TrajectoryState
 
@@ -122,8 +123,9 @@ async def run_scenario(run: RunState) -> None:
         )
 
         # Build the runtime components using real implementations.
-        registry, tool_instances = build_default_registry(run.custom_injection)
+        registry, tool_instances = build_default_registry(run.custom_injection, run.injection_target)
         detector = TraceGuardDetector(user_goal=user_goal)
+        baseline_detector = SingleStepBaseline()
         gate = PreActionGate(detector)
         trajectory = TrajectoryState(user_goal)
         
@@ -235,6 +237,9 @@ async def run_scenario(run: RunState) -> None:
 
             decisions.append(decision)
 
+            # ── Baseline Evaluation ──
+            baseline_p_hijacked = baseline_detector.evaluate_step(gate_prefix[-1] if gate_prefix else {})
+
             # ── DETECTOR_EVALUATED ──
             class_probs = decision.class_probabilities or {}
             await ws_manager.broadcast_event(
@@ -245,6 +250,7 @@ async def run_scenario(run: RunState) -> None:
                     "p_benign": class_probs.get("BENIGN"),
                     "p_injection_resisted": class_probs.get("INJECTION_RESISTED"),
                     "p_hijacked": decision.hijack_probability,
+                    "baseline_p_hijacked": baseline_p_hijacked,
                     "predicted_class": decision.predicted_class,
                     "threshold": decision.threshold,
                     "pre_action": decision.pre_action,
@@ -502,8 +508,9 @@ async def run_scenario_live(run: RunState) -> None:
             payload={"user_goal": user_goal},
         )
 
-        registry, tool_instances = build_default_registry(run.custom_injection)
+        registry, tool_instances = build_default_registry(run.custom_injection, run.injection_target)
         detector = TraceGuardDetector(user_goal=user_goal)
+        baseline_detector = SingleStepBaseline()
         gate = PreActionGate(detector)
         trajectory = TrajectoryState(user_goal)
 
@@ -604,6 +611,8 @@ async def run_scenario_live(run: RunState) -> None:
 
             decisions.append(decision)
 
+            baseline_p_hijacked = baseline_detector.evaluate_step(gate_prefix[-1] if gate_prefix else {})
+
             class_probs = decision.class_probabilities or {}
             await ws_manager.broadcast_event(
                 run_id, EventType.DETECTOR_EVALUATED,
@@ -613,6 +622,7 @@ async def run_scenario_live(run: RunState) -> None:
                     "p_benign": class_probs.get("BENIGN"),
                     "p_injection_resisted": class_probs.get("INJECTION_RESISTED"),
                     "p_hijacked": decision.hijack_probability,
+                    "baseline_p_hijacked": baseline_p_hijacked,
                     "predicted_class": decision.predicted_class,
                     "threshold": decision.threshold,
                     "pre_action": decision.pre_action,
