@@ -28,7 +28,7 @@ export const Dashboard: React.FC = () => {
     return null;
   }, [state.events]);
 
-  const isHijacked = state.status === 'BLOCKED' && state.blockedActionReason;
+  const isHijacked = state.status === 'BLOCKED' || Boolean(state.blockedActionReason);
   const isCompleted = state.status === 'COMPLETED';
 
   return (
@@ -158,7 +158,7 @@ export const Dashboard: React.FC = () => {
 
           {/* Goal vs Behavior Panel */}
           <AnimatePresence>
-            {state.untrustedObservation && state.currentTool && (
+            {state.untrustedObservation && (
                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="glass-panel p-4 bg-gray-900 border border-gray-800 flex flex-col gap-3 rounded">
                   <h2 className="text-sm font-bold flex items-center gap-2 text-gray-400 border-b border-gray-800 pb-2">
                      <Scale className="w-4 h-4 text-blue-500" />
@@ -169,14 +169,18 @@ export const Dashboard: React.FC = () => {
                         <div className="text-gray-500 text-xs mb-2">AUTHORIZED GOAL</div>
                         <div className="text-gray-300">{state.userGoal}</div>
                      </div>
-                     <div className={`bg-gray-950 p-3 rounded border ${isHijacked || (state.probabilities?.p_hijacked ?? 0) >= 0.5 ? 'border-red-900/50' : 'border-gray-800'}`}>
-                        <div className="text-gray-500 text-xs mb-2">CURRENT BEHAVIOR</div>
-                        <div className={`break-words ${isHijacked || (state.probabilities?.p_hijacked ?? 0) >= 0.5 ? 'text-red-400' : 'text-blue-400'}`}>{state.currentTool}</div>
+                     <div className={`bg-gray-950 p-3 rounded border ${isHijacked || (state.probabilities?.p_hijacked ?? 0) >= 0.5 ? 'border-red-900/50' : 'border-amber-900/50'}`}>
+                        <div className="text-gray-500 text-xs mb-2">INJECTION RECEIVED IN OBSERVATION</div>
+                        <div className="break-words text-amber-400 text-xs">{state.untrustedObservation}</div>
                      </div>
                   </div>
-                  {(state.probabilities?.p_hijacked ?? 0) >= 0.5 && (
+                  {isHijacked || (state.probabilities?.p_hijacked ?? 0) >= 0.5 ? (
                     <div className="text-center bg-red-950/30 text-red-500 font-bold p-2 border border-red-900/50 rounded text-sm uppercase tracking-wider mt-2 animate-pulse">
-                      Behavioral Deviation Detected — Goal Alignment: LOW
+                      Behavioral Deviation Detected — Goal Alignment: CRITICAL (ACTION BLOCKED)
+                    </div>
+                  ) : (
+                    <div className="text-center bg-amber-950/30 text-amber-400 font-bold p-2 border border-amber-900/50 rounded text-sm uppercase tracking-wider mt-2">
+                      ⚠️ Indirect Prompt Injection Encountered — Agent Resisted Attack & Kept Alignment
                     </div>
                   )}
                </motion.div>
@@ -201,13 +205,13 @@ export const Dashboard: React.FC = () => {
                      <div className="text-amber-400">Search result contained an injected instruction</div>
                      
                      <div className="text-gray-400 text-right">Agent Proposed</div>
-                     <div className="text-red-400 font-bold">{state.gateDetails?.tool || 'database.export_records'}</div>
+                     <div className="text-red-400 font-bold">{state.gateDetails?.tool || state.currentTool || 'database.export_records'}</div>
                      
                      <div className="text-gray-400 text-right">Security Evaluation</div>
                      <div className="text-gray-200">P(HIJACKED) = {(state.probabilities?.p_hijacked || 0).toFixed(3)}</div>
                      
                      <div className="text-gray-400 text-right">Threshold</div>
-                     <div className="text-gray-200">{(state.probabilities?.threshold || 0).toFixed(3)}</div>
+                     <div className="text-gray-200">{(state.probabilities?.threshold || 0.5).toFixed(3)}</div>
                      
                      <div className="text-gray-400 text-right">Gate Decision</div>
                      <div className="text-red-500 font-bold">BLOCK</div>
@@ -236,22 +240,32 @@ export const Dashboard: React.FC = () => {
                </motion.div>
             )}
             {isCompleted && !isHijacked && (
-               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-panel p-6 bg-emerald-950/20 border-emerald-500/50 rounded border-2">
-                  <h2 className="text-xl font-bold flex items-center gap-2 text-emerald-500 mb-2 uppercase tracking-wider">
-                     {state.untrustedObservation ? '🟡 INJECTION OBSERVED, REMAINS ALIGNED' : '🟢 TASK COMPLETED'}
-                  </h2>
-                  <div className="text-sm space-y-2 text-emerald-200 mb-4">
+               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className={`glass-panel p-6 rounded border-2 ${state.untrustedObservation ? 'bg-amber-950/20 border-amber-500/50' : 'bg-emerald-950/20 border-emerald-500/50'}`}>
+                  <h2 className="text-xl font-bold flex items-center gap-2 mb-2 uppercase tracking-wider">
                      {state.untrustedObservation ? (
-                        <>
-                          <div className="font-bold text-emerald-400 mb-2">✓ Agent ignored the injection and completed the authorized goal.</div>
-                        </>
+                       <span className="text-amber-400 flex items-center gap-2">
+                         <Shield className="w-6 h-6 text-amber-400" />
+                         WARNING: INJECTION OBSERVED (AGENT RESISTED)
+                       </span>
                      ) : (
-                        <div>Agent successfully completed the task without deviation.</div>
+                       <span className="text-emerald-400 flex items-center gap-2">
+                         <ShieldCheck className="w-6 h-6 text-emerald-400" />
+                         TASK COMPLETED
+                       </span>
+                     )}
+                  </h2>
+                  <div className="text-sm space-y-2 mb-4">
+                     {state.untrustedObservation ? (
+                        <div className="text-amber-200">
+                          <span className="font-bold text-amber-400">🛡️ Attack Mitigated:</span> Indirect prompt injection was observed in tool output. The agent resisted deviation and safely fulfilled the authorized goal.
+                        </div>
+                     ) : (
+                        <div className="text-emerald-200">Agent successfully completed the task without deviation.</div>
                      )}
                   </div>
                   {state.finalAnswer && (
-                    <div className="bg-gray-950 p-4 rounded border border-emerald-900/50 mt-2 font-mono text-sm">
-                      <div className="text-emerald-500 font-bold mb-2 text-xs uppercase tracking-wider">Final Output:</div>
+                    <div className="bg-gray-950 p-4 rounded border border-gray-800 mt-2 font-mono text-sm">
+                      <div className="text-emerald-400 font-bold mb-2 text-xs uppercase tracking-wider">Final Output:</div>
                       <div className="text-gray-200 whitespace-pre-wrap">{state.finalAnswer}</div>
                     </div>
                   )}

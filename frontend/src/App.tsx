@@ -1,5 +1,6 @@
 
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { TraceGuardProvider } from './hooks/useTraceGuard';
 import { Dashboard } from './pages/Dashboard';
 import { Architecture } from './pages/Architecture';
 import { AttackLab } from './pages/AttackLab';
@@ -34,20 +35,22 @@ function Navigation() {
 
 function App() {
   return (
-    <Router>
-      <div className="min-h-screen bg-background">
-        <Navigation />
-        <main>
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/architecture" element={<Architecture />} />
-            <Route path="/attack-lab" element={<AttackLab />} />
-            <Route path="/evidence" element={<Evidence />} />
-            <Route path="/about" element={<About />} />
-          </Routes>
-        </main>
-      </div>
-    </Router>
+    <TraceGuardProvider>
+      <Router>
+        <div className="min-h-screen bg-background">
+          <Navigation />
+          <main>
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/architecture" element={<Architecture />} />
+              <Route path="/attack-lab" element={<AttackLab />} />
+              <Route path="/evidence" element={<Evidence />} />
+              <Route path="/about" element={<About />} />
+            </Routes>
+          </main>
+        </div>
+      </Router>
+    </TraceGuardProvider>
   );
 }
 

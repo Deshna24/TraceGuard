@@ -1,32 +1,45 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, createContext, useContext } from 'react';
 import type { EventEnvelope, RunState } from '../types';
 
-export function useTraceGuard() {
-  const [state, setState] = useState<RunState>({
-    runId: null,
-    status: 'IDLE',
-    scenario: null,
-    userGoal: null,
-    model: null,
-    currentStep: null,
-    currentAction: null,
-    currentTool: null,
-    events: [],
-    trajectory: [],
-    trajectoryLength: 0,
-    untrustedObservation: null,
-    injectionNote: null,
-    probabilities: null,
-    evaluations: [],
-    thresholdCrossed: false,
-    gateDecision: null,
-    gateDetails: null,
-    blockedActionReason: null,
-    finalAnswer: null,
-    toolExecutionCounts: {},
-    error: null,
-    connectionStatus: 'DISCONNECTED'
-  });
+// --- Shared state & actions interface ---
+interface TraceGuardContextValue {
+  state: RunState;
+  startRun: (scenarioName: string, options?: { customGoal?: string; customInjection?: string; injectionTarget?: string }) => Promise<void>;
+  stopRun: () => Promise<void>;
+  reset: () => Promise<void>;
+}
+
+const initialState: RunState = {
+  runId: null,
+  status: 'IDLE',
+  scenario: null,
+  userGoal: null,
+  model: null,
+  currentStep: null,
+  currentAction: null,
+  currentTool: null,
+  events: [],
+  trajectory: [],
+  trajectoryLength: 0,
+  untrustedObservation: null,
+  injectionNote: null,
+  probabilities: null,
+  evaluations: [],
+  thresholdCrossed: false,
+  gateDecision: null,
+  gateDetails: null,
+  blockedActionReason: null,
+  finalAnswer: null,
+  toolExecutionCounts: {},
+  error: null,
+  connectionStatus: 'DISCONNECTED'
+};
+
+const TraceGuardContext = createContext<TraceGuardContextValue | null>(null);
+
+// --- Provider component (mount once at the app root) ---
+export function TraceGuardProvider({ children }: { children: React.ReactNode }) {
+  const [state, setState] = useState<RunState>(initialState);
 
   const ws = useRef<WebSocket | null>(null);
   const reconnectTimeout = useRef<number | null>(null);
@@ -140,14 +153,23 @@ export function useTraceGuard() {
             }
             break;
             
-          case 'INJECTION_OBSERVED':
-            nextState.untrustedObservation = envelope.payload.observation;
+          case 'INJECTION_OBSERVED': {
+            const obs = envelope.payload.observation;
+            nextState.untrustedObservation = typeof obs === 'string' ? obs : JSON.stringify(obs, null, 2);
             nextState.injectionNote = envelope.payload.note;
             break;
+          }
             
           case 'DETECTOR_EVALUATED':
             nextState.probabilities = envelope.payload;
-            nextState.evaluations = [...nextState.evaluations, envelope.payload];
+            nextState.evaluations = [
+              ...nextState.evaluations, 
+              { 
+                ...envelope.payload, 
+                evalIndex: nextState.evaluations.length + 1,
+                eventStep: envelope.step || (nextState.evaluations.length + 1)
+              }
+            ];
             break;
             
           case 'THRESHOLD_CROSSED':
@@ -162,6 +184,15 @@ export function useTraceGuard() {
           case 'ACTION_BLOCKED':
             nextState.status = 'BLOCKED';
             nextState.blockedActionReason = envelope.payload.reason;
+            if (envelope.payload.tool) {
+              nextState.currentTool = envelope.payload.tool;
+            }
+            if (envelope.payload.proposed_action) {
+              nextState.currentAction = envelope.payload.proposed_action.action || envelope.payload.proposed_action;
+              if (!nextState.currentTool && envelope.payload.proposed_action.tool) {
+                nextState.currentTool = envelope.payload.proposed_action.tool;
+              }
+            }
             break;
             
           case 'RUN_COMPLETED':
@@ -197,12 +228,13 @@ export function useTraceGuard() {
     };
   }, [connect]);
 
-  const startRun = async (
+  const startRun = useCallback(async (
     scenarioName: string, 
     options?: { customGoal?: string; customInjection?: string; injectionTarget?: string }
   ) => {
     try {
-      const endpoint = 'http://localhost:8000/api/run/start/live';
+      const isCustom = scenarioName === 'CUSTOM';
+      const endpoint = isCustom ? 'http://localhost:8000/api/run/start/live' : 'http://localhost:8000/api/run/start';
       await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -216,17 +248,17 @@ export function useTraceGuard() {
     } catch (e) {
       console.error('Failed to start run:', e);
     }
-  };
+  }, []);
 
-  const stopRun = async () => {
+  const stopRun = useCallback(async () => {
     try {
       await fetch('http://localhost:8000/api/run/stop', { method: 'POST' });
     } catch (e) {
       console.error('Failed to stop run:', e);
     }
-  };
+  }, []);
 
-  const reset = async () => {
+  const reset = useCallback(async () => {
     try {
       await fetch('http://localhost:8000/api/run/reset', { method: 'POST' });
     } catch (e) {
@@ -259,12 +291,18 @@ export function useTraceGuard() {
       toolExecutionCounts: {},
       error: null
     }));
-  };
+  }, []);
 
-  return {
-    state,
-    startRun,
-    stopRun,
-    reset
-  };
+  const value: TraceGuardContextValue = { state, startRun, stopRun, reset };
+
+  return React.createElement(TraceGuardContext.Provider, { value }, children);
+}
+
+// --- Consumer hook (use anywhere under the provider) ---
+export function useTraceGuard(): TraceGuardContextValue {
+  const ctx = useContext(TraceGuardContext);
+  if (!ctx) {
+    throw new Error('useTraceGuard must be used within a <TraceGuardProvider>');
+  }
+  return ctx;
 }

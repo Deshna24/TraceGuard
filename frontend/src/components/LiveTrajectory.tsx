@@ -20,7 +20,12 @@ export const LiveTrajectory: React.FC<LiveTrajectoryProps> = ({ trajectory, curr
 
   const isUntrusted = (obs: any) => {
     if (typeof obs === 'string') {
-      return obs.includes('IMPORTANT:') || obs.includes('IGNORE');
+      const lower = obs.toLowerCase();
+      return lower.includes('injected instruction') || 
+             lower.includes('ignore') || 
+             lower.includes('unauthorized') || 
+             lower.includes('database export') ||
+             obs.includes('IMPORTANT:');
     }
     return false;
   };

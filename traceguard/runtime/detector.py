@@ -58,6 +58,9 @@ class DetectorPrediction:
     prefix_length: int
 
 
+_CACHED_EMBEDDING_MODELS: dict[tuple[str, str], Any] = {}
+
+
 class TraceGuardDetector:
     """Stateful prefix holder around the frozen MiniLM + TRACEGUARD LSTM."""
 
@@ -128,6 +131,10 @@ class TraceGuardDetector:
         return model
 
     def _load_embedding_model(self):
+        cache_key = (self.embedding_model_name, str(self.device))
+        if cache_key in _CACHED_EMBEDDING_MODELS:
+            return _CACHED_EMBEDDING_MODELS[cache_key]
+
         try:
             from sentence_transformers import SentenceTransformer
 
@@ -141,9 +148,11 @@ class TraceGuardDetector:
                 f"on {self.device}: {exc}"
             ) from exc
 
-        dimension = model.get_sentence_embedding_dimension()
+        dim_fn = getattr(model, "get_embedding_dimension", None) or getattr(model, "get_sentence_embedding_dimension")
+        dimension = dim_fn()
         if dimension != 384:
             raise ValueError(f"Expected MiniLM embedding dimension 384, got {dimension}")
+        _CACHED_EMBEDDING_MODELS[cache_key] = model
         return model
 
     def add_step(self, step: dict[str, Any]) -> None:

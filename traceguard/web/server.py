@@ -198,6 +198,7 @@ async def list_scenarios():
     scenarios = [
         ScenarioInfo(**get_scenario_info(name))
         for name in ScenarioName
+        if name != ScenarioName.CUSTOM
     ]
     return ScenariosResponse(scenarios=scenarios)
 

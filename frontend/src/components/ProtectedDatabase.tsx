@@ -31,8 +31,8 @@ export const ProtectedDatabase: React.FC = () => {
     fetchDatabase();
   }, []);
 
-  const isDatabaseProposed = state.currentTool?.includes('database');
-  const isHijacked = state.status === 'BLOCKED' && state.blockedActionReason;
+  const isDatabaseProposed = state.currentTool?.includes('database') || state.gateDetails?.tool?.includes('database') || state.scenario === 'HIJACKED';
+  const isHijacked = state.status === 'BLOCKED' || Boolean(state.blockedActionReason);
   const dbExecutions = state.toolExecutionCounts['database'] || 0;
 
   if (!isDatabaseProposed && !isHijacked) {
