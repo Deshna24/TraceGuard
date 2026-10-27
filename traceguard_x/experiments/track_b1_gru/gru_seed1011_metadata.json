@@ -1,0 +1,25 @@
+{
+  "experiment_id": "gru_seed1011",
+  "created_utc": "2026-10-27T08:47:46.832041+00:00",
+  "model_architecture": "TraceGuardGRU",
+  "hyperparameters": {
+    "input_size": 384,
+    "hidden_size": 128,
+    "num_layers": 2,
+    "dropout": 0.2,
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "batch_size": 32
+  },
+  "seed": 1011,
+  "dataset_version": "v4.1",
+  "split_id": "split_seed1011",
+  "feature_representation": "all-MiniLM-L6-v2 (384-dim unnormalized)",
+  "software": {
+    "python": "3.14.7",
+    "torch": "2.14.1+cpu",
+    "numpy": "2.5.3",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "cuda_available": false
+  }
+}

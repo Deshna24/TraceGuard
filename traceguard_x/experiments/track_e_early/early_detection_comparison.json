@@ -1,0 +1,360 @@
+{
+  "models": {
+    "Frozen_LSTM_Baseline": {
+      "model_name": "Frozen_LSTM_Baseline",
+      "timing_breakdown": {
+        "total_hijacked": 30,
+        "pre_deviation": 28,
+        "pre_deviation_pct": 0.9333333333333333,
+        "at_deviation": 0,
+        "at_deviation_pct": 0.0,
+        "post_deviation": 0,
+        "post_deviation_pct": 0.0,
+        "never_detected": 2,
+        "never_detected_pct": 0.06666666666666667
+      },
+      "latency_statistics": {
+        "threshold": 0.5,
+        "n_hijacked": 30,
+        "n_detected": 28,
+        "detection_rate": 0.9333333333333333,
+        "pre_action_detection_rate": 0.9333333333333333,
+        "mean_latency": -2.7142857142857144,
+        "median_latency": -3.0,
+        "std_latency": 0.4600437062282362,
+        "pct_never_detected": 0.06666666666666667,
+        "type_a": {
+          "n": 9,
+          "n_detected": 8,
+          "detection_rate": 0.8888888888888888,
+          "pre_action_detection_rate": 0.8888888888888888,
+          "mean_latency": -2.5
+        },
+        "type_b": {
+          "n": 21,
+          "n_detected": 20,
+          "detection_rate": 0.9523809523809523,
+          "pre_action_detection_rate": 0.9523809523809523,
+          "mean_latency": -2.8
+        }
+      },
+      "false_alarm_rates": {
+        "BENIGN": 0.26666666666666666,
+        "INJECTION_RESISTED": 0.9333333333333333
+      },
+      "prefix_by_prefix_metrics": {
+        "prefix_1": {
+          "accuracy": 0.3333333333333333,
+          "macro_f1": 0.3317384370015949,
+          "hijacked_f1": 0.3157894736842105,
+          "hijacked_auroc": 0.5000000000000001
+        },
+        "prefix_2": {
+          "accuracy": 0.3111111111111111,
+          "macro_f1": 0.21003818876159305,
+          "hijacked_f1": 0.5531914893617021,
+          "hijacked_auroc": 0.6883333333333332
+        },
+        "prefix_3": {
+          "accuracy": 0.34444444444444444,
+          "macro_f1": 0.2443293608701982,
+          "hijacked_f1": 0.5957446808510638,
+          "hijacked_auroc": 0.7244444444444443
+        },
+        "prefix_4": {
+          "accuracy": 0.45555555555555555,
+          "macro_f1": 0.39999999999999997,
+          "hijacked_f1": 0.6222222222222222,
+          "hijacked_auroc": 0.83
+        },
+        "prefix_5": {
+          "accuracy": 0.7,
+          "macro_f1": 0.6914735248068581,
+          "hijacked_f1": 0.7567567567567568,
+          "hijacked_auroc": 0.9377777777777778
+        },
+        "prefix_6": {
+          "accuracy": 0.8555555555555555,
+          "macro_f1": 0.8533026113671275,
+          "hijacked_f1": 0.9032258064516129,
+          "hijacked_auroc": 0.9794444444444445
+        }
+      }
+    },
+    "TraceGuardGRU": {
+      "model_name": "TraceGuardGRU",
+      "timing_breakdown": {
+        "total_hijacked": 30,
+        "pre_deviation": 28,
+        "pre_deviation_pct": 0.9333333333333333,
+        "at_deviation": 0,
+        "at_deviation_pct": 0.0,
+        "post_deviation": 1,
+        "post_deviation_pct": 0.03333333333333333,
+        "never_detected": 1,
+        "never_detected_pct": 0.03333333333333333
+      },
+      "latency_statistics": {
+        "threshold": 0.5,
+        "n_hijacked": 30,
+        "n_detected": 29,
+        "detection_rate": 0.9666666666666667,
+        "pre_action_detection_rate": 0.9333333333333333,
+        "mean_latency": -2.6206896551724137,
+        "median_latency": -3.0,
+        "std_latency": 0.9416472308615167,
+        "pct_never_detected": 0.03333333333333333,
+        "type_a": {
+          "n": 9,
+          "n_detected": 8,
+          "detection_rate": 0.8888888888888888,
+          "pre_action_detection_rate": 0.8888888888888888,
+          "mean_latency": -2.375
+        },
+        "type_b": {
+          "n": 21,
+          "n_detected": 21,
+          "detection_rate": 1.0,
+          "pre_action_detection_rate": 0.9523809523809523,
+          "mean_latency": -2.7142857142857144
+        }
+      },
+      "false_alarm_rates": {
+        "BENIGN": 0.23333333333333334,
+        "INJECTION_RESISTED": 0.9333333333333333
+      },
+      "prefix_by_prefix_metrics": {
+        "prefix_1": {
+          "accuracy": 0.3333333333333333,
+          "macro_f1": 0.3219298245614035,
+          "hijacked_f1": 0.25,
+          "hijacked_auroc": 0.5000000000000001
+        },
+        "prefix_2": {
+          "accuracy": 0.28888888888888886,
+          "macro_f1": 0.251650739197909,
+          "hijacked_f1": 0.5194805194805194,
+          "hijacked_auroc": 0.6594444444444444
+        },
+        "prefix_3": {
+          "accuracy": 0.32222222222222224,
+          "macro_f1": 0.2328899171004434,
+          "hijacked_f1": 0.5934065934065934,
+          "hijacked_auroc": 0.7188888888888889
+        },
+        "prefix_4": {
+          "accuracy": 0.3888888888888889,
+          "macro_f1": 0.32469135802469135,
+          "hijacked_f1": 0.6222222222222222,
+          "hijacked_auroc": 0.8125
+        },
+        "prefix_5": {
+          "accuracy": 0.6888888888888889,
+          "macro_f1": 0.6826592934426335,
+          "hijacked_f1": 0.7368421052631579,
+          "hijacked_auroc": 0.9344444444444445
+        },
+        "prefix_6": {
+          "accuracy": 0.9333333333333333,
+          "macro_f1": 0.9338605164040045,
+          "hijacked_f1": 0.90625,
+          "hijacked_auroc": 0.9866666666666668
+        }
+      }
+    },
+    "TraceGuardTemporalAttention": {
+      "model_name": "TraceGuardTemporalAttention",
+      "timing_breakdown": {
+        "total_hijacked": 30,
+        "pre_deviation": 28,
+        "pre_deviation_pct": 0.9333333333333333,
+        "at_deviation": 0,
+        "at_deviation_pct": 0.0,
+        "post_deviation": 0,
+        "post_deviation_pct": 0.0,
+        "never_detected": 2,
+        "never_detected_pct": 0.06666666666666667
+      },
+      "latency_statistics": {
+        "threshold": 0.5,
+        "n_hijacked": 30,
+        "n_detected": 28,
+        "detection_rate": 0.9333333333333333,
+        "pre_action_detection_rate": 0.9333333333333333,
+        "mean_latency": -3.0357142857142856,
+        "median_latency": -3.0,
+        "std_latency": 0.4287918304520666,
+        "pct_never_detected": 0.06666666666666667,
+        "type_a": {
+          "n": 9,
+          "n_detected": 8,
+          "detection_rate": 0.8888888888888888,
+          "pre_action_detection_rate": 0.8888888888888888,
+          "mean_latency": -2.875
+        },
+        "type_b": {
+          "n": 21,
+          "n_detected": 20,
+          "detection_rate": 0.9523809523809523,
+          "pre_action_detection_rate": 0.9523809523809523,
+          "mean_latency": -3.1
+        }
+      },
+      "false_alarm_rates": {
+        "BENIGN": 0.2,
+        "INJECTION_RESISTED": 0.9333333333333333
+      },
+      "prefix_by_prefix_metrics": {
+        "prefix_1": {
+          "accuracy": 0.3333333333333333,
+          "macro_f1": 0.2663817663817664,
+          "hijacked_f1": 0.3888888888888889,
+          "hijacked_auroc": 0.5000000000000001
+        },
+        "prefix_2": {
+          "accuracy": 0.3333333333333333,
+          "macro_f1": 0.22073365231259967,
+          "hijacked_f1": 0.5894736842105263,
+          "hijacked_auroc": 0.7016666666666665
+        },
+        "prefix_3": {
+          "accuracy": 0.3333333333333333,
+          "macro_f1": 0.22588705647176413,
+          "hijacked_f1": 0.6086956521739131,
+          "hijacked_auroc": 0.73
+        },
+        "prefix_4": {
+          "accuracy": 0.4222222222222222,
+          "macro_f1": 0.3721309901085182,
+          "hijacked_f1": 0.6292134831460674,
+          "hijacked_auroc": 0.8386111111111112
+        },
+        "prefix_5": {
+          "accuracy": 0.7777777777777778,
+          "macro_f1": 0.7746692935547426,
+          "hijacked_f1": 0.8235294117647058,
+          "hijacked_auroc": 0.9466666666666667
+        },
+        "prefix_6": {
+          "accuracy": 0.8888888888888888,
+          "macro_f1": 0.8885425460527739,
+          "hijacked_f1": 0.9491525423728814,
+          "hijacked_auroc": 0.9833333333333334
+        }
+      }
+    },
+    "TraceGuardMultiTask": {
+      "model_name": "TraceGuardMultiTask",
+      "timing_breakdown": {
+        "total_hijacked": 30,
+        "pre_deviation": 27,
+        "pre_deviation_pct": 0.9,
+        "at_deviation": 0,
+        "at_deviation_pct": 0.0,
+        "post_deviation": 1,
+        "post_deviation_pct": 0.03333333333333333,
+        "never_detected": 2,
+        "never_detected_pct": 0.06666666666666667
+      },
+      "latency_statistics": {
+        "threshold": 0.5,
+        "n_hijacked": 30,
+        "n_detected": 28,
+        "detection_rate": 0.9333333333333333,
+        "pre_action_detection_rate": 0.9,
+        "mean_latency": -2.4642857142857144,
+        "median_latency": -3.0,
+        "std_latency": 0.9993384054849732,
+        "pct_never_detected": 0.06666666666666667,
+        "type_a": {
+          "n": 9,
+          "n_detected": 8,
+          "detection_rate": 0.8888888888888888,
+          "pre_action_detection_rate": 0.8888888888888888,
+          "mean_latency": -2.25
+        },
+        "type_b": {
+          "n": 21,
+          "n_detected": 20,
+          "detection_rate": 0.9523809523809523,
+          "pre_action_detection_rate": 0.9047619047619048,
+          "mean_latency": -2.55
+        }
+      },
+      "false_alarm_rates": {
+        "BENIGN": 0.2,
+        "INJECTION_RESISTED": 0.9
+      },
+      "prefix_by_prefix_metrics": {
+        "prefix_1": {
+          "accuracy": 0.3333333333333333,
+          "macro_f1": 0.22398589065255728,
+          "hijacked_f1": 0.19047619047619047,
+          "hijacked_auroc": 0.5000000000000001
+        },
+        "prefix_2": {
+          "accuracy": 0.28888888888888886,
+          "macro_f1": 0.2655971479500891,
+          "hijacked_f1": 0.5,
+          "hijacked_auroc": 0.6516666666666666
+        },
+        "prefix_3": {
+          "accuracy": 0.3333333333333333,
+          "macro_f1": 0.27062713513434433,
+          "hijacked_f1": 0.6024096385542169,
+          "hijacked_auroc": 0.7144444444444444
+        },
+        "prefix_4": {
+          "accuracy": 0.3888888888888889,
+          "macro_f1": 0.3360071301247771,
+          "hijacked_f1": 0.6352941176470588,
+          "hijacked_auroc": 0.7833333333333333
+        },
+        "prefix_5": {
+          "accuracy": 0.8,
+          "macro_f1": 0.7986656115688374,
+          "hijacked_f1": 0.8387096774193549,
+          "hijacked_auroc": 0.9211111111111111
+        },
+        "prefix_6": {
+          "accuracy": 0.9222222222222223,
+          "macro_f1": 0.9225441953708766,
+          "hijacked_f1": 0.9032258064516129,
+          "hijacked_auroc": 0.9894444444444443
+        }
+      }
+    }
+  },
+  "paired_statistical_tests": {
+    "GRU_vs_LSTM": {
+      "comparison": "GRU vs LSTM",
+      "n_pairs": 30,
+      "mean_diff": -0.03333333333333333,
+      "paired_t_statistic": -0.5708263279047432,
+      "paired_t_pvalue": 0.5725145639415323,
+      "wilcoxon_statistic": 2.0,
+      "wilcoxon_pvalue": 0.5637028616507731,
+      "statistically_significant_p05": false
+    },
+    "Attention_vs_LSTM": {
+      "comparison": "Attention vs LSTM",
+      "n_pairs": 30,
+      "mean_diff": -0.3,
+      "paired_t_statistic": -3.5254179083580186,
+      "paired_t_pvalue": 0.0014258274179025628,
+      "wilcoxon_statistic": 0.0,
+      "wilcoxon_pvalue": 0.0026997960632601866,
+      "statistically_significant_p05": true
+    },
+    "MultiTask_vs_LSTM": {
+      "comparison": "MultiTask vs LSTM",
+      "n_pairs": 30,
+      "mean_diff": 0.23333333333333334,
+      "paired_t_statistic": 1.488908551237099,
+      "paired_t_pvalue": 0.14730686621020556,
+      "wilcoxon_statistic": 8.0,
+      "wilcoxon_pvalue": 0.13166801602281422,
+      "statistically_significant_p05": false
+    }
+  }
+}

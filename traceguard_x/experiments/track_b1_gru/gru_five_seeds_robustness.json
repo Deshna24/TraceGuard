@@ -1,0 +1,498 @@
+{
+  "model": "TraceGuardGRU",
+  "seeds": [
+    42,
+    123,
+    456,
+    789,
+    1011
+  ],
+  "macro_f1_mean": 0.8954438909932165,
+  "macro_f1_std": 0.03181570527500643,
+  "accuracy_mean": 0.8955555555555555,
+  "accuracy_std": 0.032010800646417634,
+  "pre_action_mean": 0.8400000000000001,
+  "mean_latency_mean": -2.372048896186827,
+  "per_seed": [
+    {
+      "experiment_id": "gru_seed42",
+      "track": "track_b1_gru",
+      "seed": 42,
+      "architecture": "TraceGuardGRU",
+      "parameter_counts": {
+        "total": 296835,
+        "trainable": 296835,
+        "recurrent": 296448,
+        "classifier": 387
+      },
+      "training": {
+        "best_epoch": 20,
+        "best_val_f1": 0.9779478767997084,
+        "training_time_seconds": 2.7276203632354736
+      },
+      "test_metrics": {
+        "accuracy": 0.9333333333333333,
+        "macro_precision": 0.9386347131445171,
+        "macro_recall": 0.9333333333333335,
+        "macro_f1": 0.9338605164040045,
+        "per_class": {
+          "BENIGN": {
+            "precision": 0.9629629629629629,
+            "recall": 0.8666666666666667,
+            "f1": 0.9122807017543859,
+            "support": 30,
+            "auroc": 0.985,
+            "pr_auc": 0.9654304353313753
+          },
+          "INJECTION_RESISTED": {
+            "precision": 1.0,
+            "recall": 0.9666666666666667,
+            "f1": 0.9830508474576272,
+            "support": 30,
+            "auroc": 0.9988888888888889,
+            "pr_auc": 0.9979166666666667
+          },
+          "HIJACKED": {
+            "precision": 0.8529411764705882,
+            "recall": 0.9666666666666667,
+            "f1": 0.90625,
+            "support": 30,
+            "auroc": 0.9866666666666668,
+            "pr_auc": 0.9826262626262626
+          }
+        },
+        "confusion_matrix": [
+          [
+            26,
+            0,
+            4
+          ],
+          [
+            0,
+            29,
+            1
+          ],
+          [
+            1,
+            0,
+            29
+          ]
+        ],
+        "false_positive_rates": {
+          "BENIGN": 0.13333333333333333,
+          "INJECTION_RESISTED": 0.03333333333333333
+        }
+      },
+      "latency_metrics": {
+        "threshold": 0.5,
+        "n_hijacked": 30,
+        "n_detected": 29,
+        "detection_rate": 0.9666666666666667,
+        "pre_action_detection_rate": 0.9333333333333333,
+        "mean_latency": -2.6206896551724137,
+        "median_latency": -3.0,
+        "std_latency": 0.9416472308615167,
+        "pct_never_detected": 0.03333333333333333,
+        "type_a": {
+          "n": 9,
+          "n_detected": 8,
+          "detection_rate": 0.8888888888888888,
+          "pre_action_detection_rate": 0.8888888888888888,
+          "mean_latency": -2.375
+        },
+        "type_b": {
+          "n": 21,
+          "n_detected": 21,
+          "detection_rate": 1.0,
+          "pre_action_detection_rate": 0.9523809523809523,
+          "mean_latency": -2.7142857142857144
+        }
+      },
+      "inference_latency_ms_per_prefix": 0.3240366666836457
+    },
+    {
+      "experiment_id": "gru_seed123",
+      "track": "track_b1_gru",
+      "seed": 123,
+      "architecture": "TraceGuardGRU",
+      "parameter_counts": {
+        "total": 296835,
+        "trainable": 296835,
+        "recurrent": 296448,
+        "classifier": 387
+      },
+      "training": {
+        "best_epoch": 38,
+        "best_val_f1": 0.9777530589543938,
+        "training_time_seconds": 4.439100503921509
+      },
+      "test_metrics": {
+        "accuracy": 0.9,
+        "macro_precision": 0.9049059139784946,
+        "macro_recall": 0.9,
+        "macro_f1": 0.9011940215424866,
+        "per_class": {
+          "BENIGN": {
+            "precision": 0.8709677419354839,
+            "recall": 0.9,
+            "f1": 0.8852459016393442,
+            "support": 30,
+            "auroc": 0.9783333333333333,
+            "pr_auc": 0.9616414478950711
+          },
+          "INJECTION_RESISTED": {
+            "precision": 1.0,
+            "recall": 0.9,
+            "f1": 0.9473684210526315,
+            "support": 30,
+            "auroc": 0.9977777777777778,
+            "pr_auc": 0.996078431372549
+          },
+          "HIJACKED": {
+            "precision": 0.84375,
+            "recall": 0.9,
+            "f1": 0.8709677419354839,
+            "support": 30,
+            "auroc": 0.9872222222222222,
+            "pr_auc": 0.9797113997113996
+          }
+        },
+        "confusion_matrix": [
+          [
+            27,
+            0,
+            3
+          ],
+          [
+            1,
+            27,
+            2
+          ],
+          [
+            3,
+            0,
+            27
+          ]
+        ],
+        "false_positive_rates": {
+          "BENIGN": 0.1,
+          "INJECTION_RESISTED": 0.06666666666666667
+        }
+      },
+      "latency_metrics": {
+        "threshold": 0.5,
+        "n_hijacked": 30,
+        "n_detected": 28,
+        "detection_rate": 0.9333333333333333,
+        "pre_action_detection_rate": 0.8666666666666667,
+        "mean_latency": -2.4285714285714284,
+        "median_latency": -3.0,
+        "std_latency": 1.1031460542154956,
+        "pct_never_detected": 0.06666666666666667,
+        "type_a": {
+          "n": 9,
+          "n_detected": 8,
+          "detection_rate": 0.8888888888888888,
+          "pre_action_detection_rate": 0.7777777777777778,
+          "mean_latency": -2.125
+        },
+        "type_b": {
+          "n": 21,
+          "n_detected": 20,
+          "detection_rate": 0.9523809523809523,
+          "pre_action_detection_rate": 0.9047619047619048,
+          "mean_latency": -2.55
+        }
+      },
+      "inference_latency_ms_per_prefix": 0.2775053703872901
+    },
+    {
+      "experiment_id": "gru_seed456",
+      "track": "track_b1_gru",
+      "seed": 456,
+      "architecture": "TraceGuardGRU",
+      "parameter_counts": {
+        "total": 296835,
+        "trainable": 296835,
+        "recurrent": 296448,
+        "classifier": 387
+      },
+      "training": {
+        "best_epoch": 32,
+        "best_val_f1": 0.9222222222222222,
+        "training_time_seconds": 3.8653810024261475
+      },
+      "test_metrics": {
+        "accuracy": 0.9,
+        "macro_precision": 0.8995674205907799,
+        "macro_recall": 0.9,
+        "macro_f1": 0.8996140903337345,
+        "per_class": {
+          "BENIGN": {
+            "precision": 0.8666666666666667,
+            "recall": 0.8666666666666667,
+            "f1": 0.8666666666666667,
+            "support": 30,
+            "auroc": 0.9805555555555556,
+            "pr_auc": 0.9693004710507771
+          },
+          "INJECTION_RESISTED": {
+            "precision": 0.896551724137931,
+            "recall": 0.8666666666666667,
+            "f1": 0.8813559322033898,
+            "support": 30,
+            "auroc": 0.9905555555555555,
+            "pr_auc": 0.981815883884195
+          },
+          "HIJACKED": {
+            "precision": 0.9354838709677419,
+            "recall": 0.9666666666666667,
+            "f1": 0.9508196721311475,
+            "support": 30,
+            "auroc": 0.9983333333333333,
+            "pr_auc": 0.996969696969697
+          }
+        },
+        "confusion_matrix": [
+          [
+            26,
+            3,
+            1
+          ],
+          [
+            3,
+            26,
+            1
+          ],
+          [
+            1,
+            0,
+            29
+          ]
+        ],
+        "false_positive_rates": {
+          "BENIGN": 0.03333333333333333,
+          "INJECTION_RESISTED": 0.03333333333333333
+        }
+      },
+      "latency_metrics": {
+        "threshold": 0.5,
+        "n_hijacked": 30,
+        "n_detected": 29,
+        "detection_rate": 0.9666666666666667,
+        "pre_action_detection_rate": 0.7666666666666667,
+        "mean_latency": -2.0344827586206895,
+        "median_latency": -3.0,
+        "std_latency": 1.4755812080254453,
+        "pct_never_detected": 0.03333333333333333,
+        "type_a": {
+          "n": 9,
+          "n_detected": 9,
+          "detection_rate": 1.0,
+          "pre_action_detection_rate": 0.7777777777777778,
+          "mean_latency": -2.2222222222222223
+        },
+        "type_b": {
+          "n": 21,
+          "n_detected": 20,
+          "detection_rate": 0.9523809523809523,
+          "pre_action_detection_rate": 0.7619047619047619,
+          "mean_latency": -1.95
+        }
+      },
+      "inference_latency_ms_per_prefix": 0.27015222219267376
+    },
+    {
+      "experiment_id": "gru_seed789",
+      "track": "track_b1_gru",
+      "seed": 789,
+      "architecture": "TraceGuardGRU",
+      "parameter_counts": {
+        "total": 296835,
+        "trainable": 296835,
+        "recurrent": 296448,
+        "classifier": 387
+      },
+      "training": {
+        "best_epoch": 21,
+        "best_val_f1": 0.9216954022988505,
+        "training_time_seconds": 2.398876428604126
+      },
+      "test_metrics": {
+        "accuracy": 0.8444444444444444,
+        "macro_precision": 0.8488215488215488,
+        "macro_recall": 0.8444444444444444,
+        "macro_f1": 0.8452520189362294,
+        "per_class": {
+          "BENIGN": {
+            "precision": 0.7575757575757576,
+            "recall": 0.8333333333333334,
+            "f1": 0.7936507936507936,
+            "support": 30,
+            "auroc": 0.9427777777777777,
+            "pr_auc": 0.8873796229640587
+          },
+          "INJECTION_RESISTED": {
+            "precision": 0.8888888888888888,
+            "recall": 0.8,
+            "f1": 0.8421052631578947,
+            "support": 30,
+            "auroc": 0.961111111111111,
+            "pr_auc": 0.9368455278097634
+          },
+          "HIJACKED": {
+            "precision": 0.9,
+            "recall": 0.9,
+            "f1": 0.9,
+            "support": 30,
+            "auroc": 0.9800000000000001,
+            "pr_auc": 0.9679783022013377
+          }
+        },
+        "confusion_matrix": [
+          [
+            25,
+            3,
+            2
+          ],
+          [
+            5,
+            24,
+            1
+          ],
+          [
+            3,
+            0,
+            27
+          ]
+        ],
+        "false_positive_rates": {
+          "BENIGN": 0.06666666666666667,
+          "INJECTION_RESISTED": 0.03333333333333333
+        }
+      },
+      "latency_metrics": {
+        "threshold": 0.5,
+        "n_hijacked": 30,
+        "n_detected": 27,
+        "detection_rate": 0.9,
+        "pre_action_detection_rate": 0.7666666666666667,
+        "mean_latency": -2.259259259259259,
+        "median_latency": -3.0,
+        "std_latency": 1.3182912189238527,
+        "pct_never_detected": 0.1,
+        "type_a": {
+          "n": 9,
+          "n_detected": 8,
+          "detection_rate": 0.8888888888888888,
+          "pre_action_detection_rate": 0.6666666666666666,
+          "mean_latency": -2.0
+        },
+        "type_b": {
+          "n": 21,
+          "n_detected": 19,
+          "detection_rate": 0.9047619047619048,
+          "pre_action_detection_rate": 0.8095238095238095,
+          "mean_latency": -2.3684210526315788
+        }
+      },
+      "inference_latency_ms_per_prefix": 0.27069796293896314
+    },
+    {
+      "experiment_id": "gru_seed1011",
+      "track": "track_b1_gru",
+      "seed": 1011,
+      "architecture": "TraceGuardGRU",
+      "parameter_counts": {
+        "total": 296835,
+        "trainable": 296835,
+        "recurrent": 296448,
+        "classifier": 387
+      },
+      "training": {
+        "best_epoch": 23,
+        "best_val_f1": 0.9445963185711682,
+        "training_time_seconds": 2.5692672729492188
+      },
+      "test_metrics": {
+        "accuracy": 0.9,
+        "macro_precision": 0.9018595825426945,
+        "macro_recall": 0.9,
+        "macro_f1": 0.8972988077496274,
+        "per_class": {
+          "BENIGN": {
+            "precision": 0.92,
+            "recall": 0.7666666666666667,
+            "f1": 0.8363636363636363,
+            "support": 30,
+            "auroc": 0.9383333333333335,
+            "pr_auc": 0.8739957900058817
+          },
+          "INJECTION_RESISTED": {
+            "precision": 0.8823529411764706,
+            "recall": 1.0,
+            "f1": 0.9375,
+            "support": 30,
+            "auroc": 0.9805555555555556,
+            "pr_auc": 0.9588107438110325
+          },
+          "HIJACKED": {
+            "precision": 0.9032258064516129,
+            "recall": 0.9333333333333333,
+            "f1": 0.9180327868852459,
+            "support": 30,
+            "auroc": 0.9861111111111112,
+            "pr_auc": 0.9794657049355506
+          }
+        },
+        "confusion_matrix": [
+          [
+            23,
+            4,
+            3
+          ],
+          [
+            0,
+            30,
+            0
+          ],
+          [
+            2,
+            0,
+            28
+          ]
+        ],
+        "false_positive_rates": {
+          "BENIGN": 0.1,
+          "INJECTION_RESISTED": 0.0
+        }
+      },
+      "latency_metrics": {
+        "threshold": 0.5,
+        "n_hijacked": 30,
+        "n_detected": 29,
+        "detection_rate": 0.9666666666666667,
+        "pre_action_detection_rate": 0.8666666666666667,
+        "mean_latency": -2.5172413793103448,
+        "median_latency": -3.0,
+        "std_latency": 1.1218826541377545,
+        "pct_never_detected": 0.03333333333333333,
+        "type_a": {
+          "n": 9,
+          "n_detected": 8,
+          "detection_rate": 0.8888888888888888,
+          "pre_action_detection_rate": 0.8888888888888888,
+          "mean_latency": -2.875
+        },
+        "type_b": {
+          "n": 21,
+          "n_detected": 21,
+          "detection_rate": 1.0,
+          "pre_action_detection_rate": 0.8571428571428571,
+          "mean_latency": -2.380952380952381
+        }
+      },
+      "inference_latency_ms_per_prefix": 0.2534927777661425
+    }
+  ]
+}

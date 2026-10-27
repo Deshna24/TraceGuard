@@ -1,0 +1,106 @@
+{
+  "experiment_id": "multitask_seed42",
+  "track": "track_b3_earlywarn",
+  "seed": 42,
+  "architecture": "TraceGuardMultiTaskEarlyWarning",
+  "parameter_counts": {
+    "total": 296964,
+    "trainable": 296964,
+    "encoder": 296448,
+    "main_head": 387,
+    "warning_head": 129
+  },
+  "training": {
+    "best_epoch": 18,
+    "best_val_f1": 0.9777777777777779,
+    "training_time_seconds": 2.5450100898742676,
+    "aux_loss_weight": 0.5
+  },
+  "test_metrics": {
+    "accuracy": 0.9222222222222223,
+    "macro_precision": 0.9238505747126436,
+    "macro_recall": 0.9222222222222222,
+    "macro_f1": 0.9225441953708766,
+    "per_class": {
+      "BENIGN": {
+        "precision": 0.896551724137931,
+        "recall": 0.8666666666666667,
+        "f1": 0.8813559322033898,
+        "support": 30,
+        "auroc": 0.9822222222222222,
+        "pr_auc": 0.9623543197434001
+      },
+      "INJECTION_RESISTED": {
+        "precision": 1.0,
+        "recall": 0.9666666666666667,
+        "f1": 0.9830508474576272,
+        "support": 30,
+        "auroc": 0.9988888888888889,
+        "pr_auc": 0.9979166666666667
+      },
+      "HIJACKED": {
+        "precision": 0.875,
+        "recall": 0.9333333333333333,
+        "f1": 0.9032258064516129,
+        "support": 30,
+        "auroc": 0.9894444444444443,
+        "pr_auc": 0.982849839862035
+      }
+    },
+    "confusion_matrix": [
+      [
+        26,
+        0,
+        4
+      ],
+      [
+        1,
+        29,
+        0
+      ],
+      [
+        2,
+        0,
+        28
+      ]
+    ],
+    "false_positive_rates": {
+      "BENIGN": 0.13333333333333333,
+      "INJECTION_RESISTED": 0.0
+    }
+  },
+  "latency_metrics": {
+    "threshold": 0.5,
+    "n_hijacked": 30,
+    "n_detected": 28,
+    "detection_rate": 0.9333333333333333,
+    "pre_action_detection_rate": 0.9,
+    "mean_latency": -2.4642857142857144,
+    "median_latency": -3.0,
+    "std_latency": 0.9993384054849732,
+    "pct_never_detected": 0.06666666666666667,
+    "type_a": {
+      "n": 9,
+      "n_detected": 8,
+      "detection_rate": 0.8888888888888888,
+      "pre_action_detection_rate": 0.8888888888888888,
+      "mean_latency": -2.25
+    },
+    "type_b": {
+      "n": 21,
+      "n_detected": 20,
+      "detection_rate": 0.9523809523809523,
+      "pre_action_detection_rate": 0.9047619047619048,
+      "mean_latency": -2.55
+    }
+  },
+  "auxiliary_head_metrics": {
+    "imminent_deviation_auroc": 0.7804687500000002,
+    "imminent_deviation_pr_auc": 0.2489155264887446,
+    "mean_warning_hijacked": 0.7175452934307234,
+    "mean_warning_benign": 0.15285172597106997,
+    "mean_warning_resisted": 0.45732977300457506,
+    "supervision_method": "derived from documented deviation_step metadata without leaking future tokens"
+  },
+  "inference_latency_ms_per_prefix": 0.368255370402174
+}

@@ -19,8 +19,14 @@ from __future__ import annotations
 import asyncio
 import copy
 import logging
+import sys
 from pathlib import Path
 from typing import Any
+
+# Ensure repository root is importable for traceguard_x
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
 from runtime.action_gate import GateDecision, PreActionGate, ProposedAction
 from runtime.detector import TraceGuardDetector
@@ -125,9 +131,23 @@ async def run_scenario(run: RunState) -> None:
         # Build the runtime components using real implementations.
         include_fixture = (scenario_name in (ScenarioName.HIJACKED, ScenarioName.INJECTION_RESISTED))
         registry, tool_instances = build_default_registry(run.custom_injection, run.injection_target, include_fixture=include_fixture)
-        detector = TraceGuardDetector(user_goal=user_goal)
+        
+        model_arch = getattr(run, "model_architecture", "lstm")
+        if model_arch in ("gru", "attention", "multitask"):
+            from traceguard_x.runtime.detector import TraceGuardXRuntimeDetector
+            detector = TraceGuardXRuntimeDetector(user_goal=user_goal, model_name=model_arch)
+        else:
+            detector = TraceGuardDetector(user_goal=user_goal)
+
         baseline_detector = SingleStepBaseline()
-        gate = PreActionGate(detector)
+
+        gate_type = getattr(run, "gate_type", "standard")
+        if gate_type in ("uncertainty_aware", "uncertainty"):
+            from traceguard_x.gate.uncertainty_gate import UncertaintyActionGate
+            gate = UncertaintyActionGate(detector)
+        else:
+            gate = PreActionGate(detector)
+
         trajectory = TrajectoryState(user_goal)
         
         if scenario_name == ScenarioName.CUSTOM:
@@ -255,6 +275,11 @@ async def run_scenario(run: RunState) -> None:
                     "predicted_class": decision.predicted_class,
                     "threshold": decision.threshold,
                     "pre_action": decision.pre_action,
+                    "model_architecture": getattr(run, "model_architecture", "lstm"),
+                    "gate_type": getattr(run, "gate_type", "standard"),
+                    "warning_score": getattr(getattr(detector, "last_prediction", None), "warning_score", None),
+                    "attention_weights": getattr(getattr(detector, "last_prediction", None), "attention_weights", None),
+                    "uncertainty_score": getattr(decision, "uncertainty_score", None),
                 },
             )
 
@@ -296,11 +321,13 @@ async def run_scenario(run: RunState) -> None:
                     "threshold": decision.threshold,
                     "detection_step": decision.detection_step,
                     "pre_action": decision.pre_action,
+                    "reason": getattr(decision, "reason", None),
+                    "uncertainty_score": getattr(decision, "uncertainty_score", None),
                 },
             )
 
             # ── ACTION_BLOCKED ──
-            if decision.blocked:
+            if decision.blocked or getattr(decision, "abstained", False):
                 blocked_action = proposed.as_dict()
                 await ws_manager.broadcast_event(
                     run_id, EventType.ACTION_BLOCKED,
@@ -311,11 +338,12 @@ async def run_scenario(run: RunState) -> None:
                         "tool_input": copy.deepcopy(proposed.tool_input),
                         "p_hijacked": decision.hijack_probability,
                         "threshold": decision.threshold,
-                        "reason": decision.error or "P(HIJACKED) >= threshold",
+                        "reason": getattr(decision, "reason", decision.error or "P(HIJACKED) >= threshold"),
+                        "decision": decision.decision,
                     },
                 )
-                final_status = "blocked"
-                final_error = decision.error
+                final_status = "blocked" if decision.blocked else "abstained"
+                final_error = getattr(decision, "reason", decision.error)
                 break
 
             # ── TOOL_STARTED ──
@@ -327,11 +355,19 @@ async def run_scenario(run: RunState) -> None:
 
             # Execute tool (blocking, run in thread).
             try:
-                result = await asyncio.to_thread(
-                    PreActionGate.execute_if_allowed,
-                    decision,
-                    lambda approved: registry.invoke(approved["tool"], approved["tool_input"]),
-                )
+                if hasattr(gate, "execute_if_allowed") and not isinstance(gate, PreActionGate):
+                    result = await asyncio.to_thread(
+                        gate.execute_if_allowed,
+                        decision,
+                        lambda inp: registry.invoke(proposed.tool, inp),
+                        proposed.tool_input,
+                    )
+                else:
+                    result = await asyncio.to_thread(
+                        PreActionGate.execute_if_allowed,
+                        decision,
+                        lambda approved: registry.invoke(approved["tool"], approved["tool_input"]),
+                    )
             except Exception as exc:
                 final_status = "tool_failure"
                 final_error = str(exc)
@@ -511,9 +547,23 @@ async def run_scenario_live(run: RunState) -> None:
 
         include_fixture = (scenario_name in (ScenarioName.HIJACKED, ScenarioName.INJECTION_RESISTED))
         registry, tool_instances = build_default_registry(run.custom_injection, run.injection_target, include_fixture=include_fixture)
-        detector = TraceGuardDetector(user_goal=user_goal)
+        
+        model_arch = getattr(run, "model_architecture", "lstm")
+        if model_arch in ("gru", "attention", "multitask"):
+            from traceguard_x.runtime.detector import TraceGuardXRuntimeDetector
+            detector = TraceGuardXRuntimeDetector(user_goal=user_goal, model_name=model_arch)
+        else:
+            detector = TraceGuardDetector(user_goal=user_goal)
+
         baseline_detector = SingleStepBaseline()
-        gate = PreActionGate(detector)
+
+        gate_type = getattr(run, "gate_type", "standard")
+        if gate_type in ("uncertainty_aware", "uncertainty"):
+            from traceguard_x.gate.uncertainty_gate import UncertaintyActionGate
+            gate = UncertaintyActionGate(detector)
+        else:
+            gate = PreActionGate(detector)
+
         trajectory = TrajectoryState(user_goal)
 
         # Build appropriate model prompt goal
@@ -635,6 +685,7 @@ async def run_scenario_live(run: RunState) -> None:
 
             baseline_p_hijacked = baseline_detector.evaluate_step(gate_prefix[-1] if gate_prefix else {})
 
+            # ── DETECTOR_EVALUATED ──
             class_probs = decision.class_probabilities or {}
             await ws_manager.broadcast_event(
                 run_id, EventType.DETECTOR_EVALUATED,
@@ -648,6 +699,11 @@ async def run_scenario_live(run: RunState) -> None:
                     "predicted_class": decision.predicted_class,
                     "threshold": decision.threshold,
                     "pre_action": decision.pre_action,
+                    "model_architecture": getattr(run, "model_architecture", "lstm"),
+                    "gate_type": getattr(run, "gate_type", "standard"),
+                    "warning_score": getattr(getattr(detector, "last_prediction", None), "warning_score", None),
+                    "attention_weights": getattr(getattr(detector, "last_prediction", None), "attention_weights", None),
+                    "uncertainty_score": getattr(decision, "uncertainty_score", None),
                 },
             )
 
@@ -686,10 +742,12 @@ async def run_scenario_live(run: RunState) -> None:
                     "threshold": decision.threshold,
                     "detection_step": decision.detection_step,
                     "pre_action": decision.pre_action,
+                    "reason": getattr(decision, "reason", None),
+                    "uncertainty_score": getattr(decision, "uncertainty_score", None),
                 },
             )
 
-            if decision.blocked:
+            if decision.blocked or getattr(decision, "abstained", False):
                 blocked_action = proposed.as_dict()
                 await ws_manager.broadcast_event(
                     run_id, EventType.ACTION_BLOCKED,
@@ -700,11 +758,12 @@ async def run_scenario_live(run: RunState) -> None:
                         "tool_input": copy.deepcopy(proposed.tool_input),
                         "p_hijacked": decision.hijack_probability,
                         "threshold": decision.threshold,
-                        "reason": decision.error or "P(HIJACKED) >= threshold",
+                        "reason": getattr(decision, "reason", decision.error or "P(HIJACKED) >= threshold"),
+                        "decision": decision.decision,
                     },
                 )
-                final_status = "blocked"
-                final_error = decision.error
+                final_status = "blocked" if decision.blocked else "abstained"
+                final_error = getattr(decision, "reason", decision.error)
                 break
 
             await ws_manager.broadcast_event(
@@ -714,11 +773,19 @@ async def run_scenario_live(run: RunState) -> None:
             )
 
             try:
-                result = await asyncio.to_thread(
-                    PreActionGate.execute_if_allowed,
-                    decision,
-                    lambda approved: registry.invoke(approved["tool"], approved["tool_input"]),
-                )
+                if hasattr(gate, "execute_if_allowed") and not isinstance(gate, PreActionGate):
+                    result = await asyncio.to_thread(
+                        gate.execute_if_allowed,
+                        decision,
+                        lambda inp: registry.invoke(proposed.tool, inp),
+                        proposed.tool_input,
+                    )
+                else:
+                    result = await asyncio.to_thread(
+                        PreActionGate.execute_if_allowed,
+                        decision,
+                        lambda approved: registry.invoke(approved["tool"], approved["tool_input"]),
+                    )
             except Exception as exc:
                 final_status = "tool_failure"
                 final_error = str(exc)

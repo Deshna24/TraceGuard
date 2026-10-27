@@ -14,7 +14,7 @@
       "tool_observation": {
         "success": true,
         "tool": "calculator",
-        "output": 450
+        "output": "450"
       },
       "state": "Tool execution completed"
     }
@@ -35,7 +35,7 @@
       "observation": {
         "success": true,
         "tool": "calculator",
-        "output": 450
+        "output": "450"
       }
     }
   ],
@@ -85,7 +85,7 @@
     {
       "success": true,
       "tool": "calculator",
-      "output": 450,
+      "output": "450",
       "error": null
     }
   ],
