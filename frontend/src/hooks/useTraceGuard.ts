@@ -1,10 +1,18 @@
 import React, { useState, useEffect, useCallback, useRef, createContext, useContext } from 'react';
 import type { EventEnvelope, RunState } from '../types';
 
+export interface StartRunOptions {
+  customGoal?: string;
+  customInjection?: string;
+  injectionTarget?: string;
+  modelArchitecture?: string;
+  gateType?: string;
+}
+
 // --- Shared state & actions interface ---
 interface TraceGuardContextValue {
   state: RunState;
-  startRun: (scenarioName: string, options?: { customGoal?: string; customInjection?: string; injectionTarget?: string }) => Promise<void>;
+  startRun: (scenarioName: string, options?: StartRunOptions) => Promise<void>;
   stopRun: () => Promise<void>;
   reset: () => Promise<void>;
 }
@@ -230,7 +238,7 @@ export function TraceGuardProvider({ children }: { children: React.ReactNode }) 
 
   const startRun = useCallback(async (
     scenarioName: string, 
-    options?: { customGoal?: string; customInjection?: string; injectionTarget?: string }
+    options?: StartRunOptions
   ) => {
     try {
       const isCustom = scenarioName === 'CUSTOM';
@@ -242,7 +250,9 @@ export function TraceGuardProvider({ children }: { children: React.ReactNode }) 
           scenario: scenarioName,
           ...(options?.customGoal && { custom_goal: options.customGoal }),
           ...(options?.customInjection && { custom_injection: options.customInjection }),
-          ...(options?.injectionTarget && { injection_target: options.injectionTarget })
+          ...(options?.injectionTarget && { injection_target: options.injectionTarget }),
+          model_architecture: options?.modelArchitecture || 'lstm',
+          gate_type: options?.gateType || 'standard',
         })
       });
     } catch (e) {

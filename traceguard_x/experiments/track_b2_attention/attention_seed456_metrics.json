@@ -1,0 +1,98 @@
+{
+  "experiment_id": "attention_seed456",
+  "track": "track_b2_attention",
+  "seed": 456,
+  "architecture": "TraceGuardTemporalAttention",
+  "parameter_counts": {
+    "total": 305155,
+    "trainable": 305155,
+    "encoder": 296448,
+    "attention": 8320,
+    "classifier": 387
+  },
+  "training": {
+    "best_epoch": 43,
+    "best_val_f1": 0.9114377237610704,
+    "training_time_seconds": 4.918661117553711
+  },
+  "test_metrics": {
+    "accuracy": 0.9,
+    "macro_precision": 0.8997023809523809,
+    "macro_recall": 0.9,
+    "macro_f1": 0.8991842788283279,
+    "per_class": {
+      "BENIGN": {
+        "precision": 0.8928571428571429,
+        "recall": 0.8333333333333334,
+        "f1": 0.8620689655172413,
+        "support": 30,
+        "auroc": 0.9705555555555555,
+        "pr_auc": 0.9337235222492904
+      },
+      "INJECTION_RESISTED": {
+        "precision": 0.9,
+        "recall": 0.9,
+        "f1": 0.9,
+        "support": 30,
+        "auroc": 0.9844444444444445,
+        "pr_auc": 0.9732499518025833
+      },
+      "HIJACKED": {
+        "precision": 0.90625,
+        "recall": 0.9666666666666667,
+        "f1": 0.9354838709677419,
+        "support": 30,
+        "auroc": 0.9922222222222221,
+        "pr_auc": 0.9893939393939394
+      }
+    },
+    "confusion_matrix": [
+      [
+        25,
+        3,
+        2
+      ],
+      [
+        2,
+        27,
+        1
+      ],
+      [
+        1,
+        0,
+        29
+      ]
+    ],
+    "false_positive_rates": {
+      "BENIGN": 0.06666666666666667,
+      "INJECTION_RESISTED": 0.03333333333333333
+    }
+  },
+  "latency_metrics": {
+    "threshold": 0.5,
+    "n_hijacked": 30,
+    "n_detected": 29,
+    "detection_rate": 0.9666666666666667,
+    "pre_action_detection_rate": 0.9666666666666667,
+    "mean_latency": -2.6551724137931036,
+    "median_latency": -3.0,
+    "std_latency": 0.7688517444384895,
+    "pct_never_detected": 0.03333333333333333,
+    "type_a": {
+      "n": 9,
+      "n_detected": 9,
+      "detection_rate": 1.0,
+      "pre_action_detection_rate": 1.0,
+      "mean_latency": -3.0
+    },
+    "type_b": {
+      "n": 21,
+      "n_detected": 20,
+      "detection_rate": 0.9523809523809523,
+      "pre_action_detection_rate": 0.9523809523809523,
+      "mean_latency": -2.5
+    }
+  },
+  "inference_latency_ms_per_prefix": 0.5176912963010923,
+  "attention_diagnostics_notice": "Attention weights are diagnostic representation pooling indicators, NOT causal explanations."
+}

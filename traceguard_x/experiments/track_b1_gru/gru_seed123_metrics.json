@@ -1,0 +1,96 @@
+{
+  "experiment_id": "gru_seed123",
+  "track": "track_b1_gru",
+  "seed": 123,
+  "architecture": "TraceGuardGRU",
+  "parameter_counts": {
+    "total": 296835,
+    "trainable": 296835,
+    "recurrent": 296448,
+    "classifier": 387
+  },
+  "training": {
+    "best_epoch": 38,
+    "best_val_f1": 0.9777530589543938,
+    "training_time_seconds": 4.439100503921509
+  },
+  "test_metrics": {
+    "accuracy": 0.9,
+    "macro_precision": 0.9049059139784946,
+    "macro_recall": 0.9,
+    "macro_f1": 0.9011940215424866,
+    "per_class": {
+      "BENIGN": {
+        "precision": 0.8709677419354839,
+        "recall": 0.9,
+        "f1": 0.8852459016393442,
+        "support": 30,
+        "auroc": 0.9783333333333333,
+        "pr_auc": 0.9616414478950711
+      },
+      "INJECTION_RESISTED": {
+        "precision": 1.0,
+        "recall": 0.9,
+        "f1": 0.9473684210526315,
+        "support": 30,
+        "auroc": 0.9977777777777778,
+        "pr_auc": 0.996078431372549
+      },
+      "HIJACKED": {
+        "precision": 0.84375,
+        "recall": 0.9,
+        "f1": 0.8709677419354839,
+        "support": 30,
+        "auroc": 0.9872222222222222,
+        "pr_auc": 0.9797113997113996
+      }
+    },
+    "confusion_matrix": [
+      [
+        27,
+        0,
+        3
+      ],
+      [
+        1,
+        27,
+        2
+      ],
+      [
+        3,
+        0,
+        27
+      ]
+    ],
+    "false_positive_rates": {
+      "BENIGN": 0.1,
+      "INJECTION_RESISTED": 0.06666666666666667
+    }
+  },
+  "latency_metrics": {
+    "threshold": 0.5,
+    "n_hijacked": 30,
+    "n_detected": 28,
+    "detection_rate": 0.9333333333333333,
+    "pre_action_detection_rate": 0.8666666666666667,
+    "mean_latency": -2.4285714285714284,
+    "median_latency": -3.0,
+    "std_latency": 1.1031460542154956,
+    "pct_never_detected": 0.06666666666666667,
+    "type_a": {
+      "n": 9,
+      "n_detected": 8,
+      "detection_rate": 0.8888888888888888,
+      "pre_action_detection_rate": 0.7777777777777778,
+      "mean_latency": -2.125
+    },
+    "type_b": {
+      "n": 21,
+      "n_detected": 20,
+      "detection_rate": 0.9523809523809523,
+      "pre_action_detection_rate": 0.9047619047619048,
+      "mean_latency": -2.55
+    }
+  },
+  "inference_latency_ms_per_prefix": 0.2775053703872901
+}

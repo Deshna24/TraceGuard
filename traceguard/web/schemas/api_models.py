@@ -26,6 +26,21 @@ class ScenarioName(str, Enum):
     CUSTOM = "CUSTOM"
 
 
+class ModelArchitectureName(str, Enum):
+    """Supported detector architectures."""
+    LSTM = "lstm"
+    GRU = "gru"
+    ATTENTION = "attention"
+    MULTITASK = "multitask"
+
+
+class GateTypeName(str, Enum):
+    """Supported safety gate policies."""
+    STANDARD = "standard"
+    UNCERTAINTY_AWARE = "uncertainty_aware"
+    UNCERTAINTY = "uncertainty"
+
+
 class EventType(str, Enum):
     """Every WebSocket event the backend can emit."""
     RUN_STARTED = "RUN_STARTED"
@@ -116,6 +131,14 @@ class RunStartRequest(BaseModel):
     injection_target: Optional[str] = Field(
         None, description="Interactive mode injection target (e.g. search, database, calculator)"
     )
+    model_architecture: Optional[ModelArchitectureName] = Field(
+        default=ModelArchitectureName.LSTM,
+        description="Selected architecture: lstm, gru, attention, multitask",
+    )
+    gate_type: Optional[GateTypeName] = Field(
+        default=GateTypeName.STANDARD,
+        description="Selected safety gate: standard or uncertainty_aware",
+    )
 
 
 class RunStartResponse(BaseModel):
@@ -140,10 +163,131 @@ class ScenariosResponse(BaseModel):
     scenarios: list[ScenarioInfo]
 
 
+# ---------------------------------------------------------------------------
+# Direct Analysis & Productization API Models
+# ---------------------------------------------------------------------------
+
+class TrajectoryStepInput(BaseModel):
+    step: Optional[int] = None
+    action: Optional[str] = None
+    tool: Optional[str] = None
+    tool_input: Optional[dict[str, Any]] = None
+    tool_observation: Optional[str] = None
+    state: Optional[str] = None
+
+
+class TrajectoryAnalysisRequest(BaseModel):
+    user_goal: str = Field(..., description="High-level goal given by user to the agent")
+    steps: list[dict[str, Any]] = Field(
+        default_factory=list,
+        description="Sequential list of chronological steps in the trajectory prefix"
+    )
+    model_architecture: ModelArchitectureName = Field(
+        default=ModelArchitectureName.LSTM,
+        description="Model architecture to evaluate: lstm, gru, attention, multitask"
+    )
+    gate_type: GateTypeName = Field(
+        default=GateTypeName.STANDARD,
+        description="Safety gate policy mode: standard or uncertainty_aware"
+    )
+    candidate_action: Optional[dict[str, Any]] = Field(
+        default=None,
+        description="Optional proposed action to evaluate before tool invocation"
+    )
+
+
+class UncertaintyInfo(BaseModel):
+    normalized_entropy: float
+    level: str
+
+
+class PolicyDecisionInfo(BaseModel):
+    gate_type: str
+    decision: str
+    reason: str
+    action_permitted: bool
+    requires_operator_review: bool
+    threshold_block: float
+    threshold_abstain: Optional[float] = None
+    entropy_tau: Optional[float] = None
+
+
+class ExecutionInfo(BaseModel):
+    device: str
+    device_name: str
+    latency_ms: float
+
+
+class TrajectoryAnalysisResponse(BaseModel):
+    model_id: str
+    user_goal: str
+    trajectory_length: int
+    predicted_class: str
+    probabilities: dict[str, float]
+    uncertainty: UncertaintyInfo
+    attention_weights: Optional[list[float]] = None
+    warning_score: Optional[float] = None
+    policy: PolicyDecisionInfo
+    execution: ExecutionInfo
+
+
+class PolicyEvaluateRequest(BaseModel):
+    p_hijacked: float = Field(..., ge=0.0, le=1.0)
+    entropy: float = Field(0.0, ge=0.0, le=1.0)
+    gate_type: GateTypeName = Field(default=GateTypeName.STANDARD)
+    candidate_action: Optional[dict[str, Any]] = None
+
+
+class PolicyEvaluateResponse(BaseModel):
+    decision: str
+    reason: str
+    action_permitted: bool
+    requires_operator_review: bool
+    threshold_block: float
+    threshold_abstain: Optional[float] = None
+    entropy_tau: Optional[float] = None
+
+
+class ModelMetadataResponse(BaseModel):
+    id: str
+    name: str
+    architecture: str
+    parameters: int
+    checkpoint_path: str
+    checkpoint_available: bool
+    supported_outputs: list[str]
+    research_track: str
+    macro_f1: float
+    hijacked_f1: float
+    description: str
+    is_loaded: bool
+    device: str
+
+
+class SystemHealthResponse(BaseModel):
+    status: str
+    version: str
+    device: str
+    device_name: str
+    cuda_available: bool
+    vram_total_gb: Optional[float] = None
+    vram_allocated_gb: Optional[float] = None
+    torch_version: str
+    embedding_cache_available: bool
+    models_available: dict[str, bool]
+
+
 __all__ = [
     "EventEnvelope",
     "EventType",
+    "ExecutionInfo",
+    "GateTypeName",
     "HealthResponse",
+    "ModelArchitectureName",
+    "ModelMetadataResponse",
+    "PolicyDecisionInfo",
+    "PolicyEvaluateRequest",
+    "PolicyEvaluateResponse",
     "RunActionResponse",
     "RunStartRequest",
     "RunStartResponse",
@@ -152,4 +296,10 @@ __all__ = [
     "ScenarioName",
     "ScenariosResponse",
     "StatusResponse",
+    "SystemHealthResponse",
+    "TrajectoryAnalysisRequest",
+    "TrajectoryAnalysisResponse",
+    "TrajectoryStepInput",
+    "UncertaintyInfo",
 ]
+

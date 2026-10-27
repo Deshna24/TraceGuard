@@ -9,6 +9,8 @@ import { ProtectedDatabase } from '../components/ProtectedDatabase';
 
 export const Dashboard: React.FC = () => {
   const { state, startRun, stopRun, reset } = useTraceGuard();
+  const [selectedModel, setSelectedModel] = React.useState<string>('lstm');
+  const [selectedGate, setSelectedGate] = React.useState<string>('standard');
   
   const isDisconnected = state.connectionStatus === 'DISCONNECTED';
   const isRunning = state.status === 'RUNNING' || state.status === 'ACTING' || state.status === 'WAITING';
@@ -31,39 +33,76 @@ export const Dashboard: React.FC = () => {
   const isHijacked = state.status === 'BLOCKED' || Boolean(state.blockedActionReason);
   const isCompleted = state.status === 'COMPLETED';
 
+  const handleStart = (scenario: string) => {
+    startRun(scenario, { modelArchitecture: selectedModel, gateType: selectedGate });
+  };
+
   return (
     <div className="min-h-screen bg-background text-gray-100 p-4 flex flex-col gap-4 font-sans">
       {/* Header */}
-      <header className="flex items-center justify-between glass-panel p-4 rounded-lg bg-gray-950/50 border border-gray-800">
+      <header className="flex flex-wrap items-center justify-between glass-panel p-4 rounded-lg bg-gray-950/50 border border-gray-800 gap-4">
         <div className="flex items-center gap-4">
           <Shield className="w-8 h-8 text-blue-500" />
           <div>
             <h1 className="text-3xl font-extrabold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600">
-              TRACEGUARD
+              TRACEGUARD-X
             </h1>
             <p className="text-blue-300/60 text-xs mt-1 uppercase tracking-widest font-bold">
-              Real-Time Security Intercept
+              Uncertainty-Aware Temporal Security Intercept
             </p>
           </div>
         </div>
+
+        {/* Model & Gate Selector Controls */}
+        <div className="flex flex-wrap items-center gap-3 bg-gray-900/60 p-2 rounded-lg border border-gray-800 text-xs font-mono">
+          <div className="flex items-center gap-1">
+            <span className="text-gray-400 font-bold uppercase">Model:</span>
+            <select
+              value={selectedModel}
+              onChange={(e) => setSelectedModel(e.target.value)}
+              disabled={isRunning}
+              className="bg-gray-800 text-blue-300 border border-gray-700 rounded px-2 py-1 text-xs font-semibold focus:outline-none focus:border-blue-500"
+            >
+              <option value="lstm">LSTM (Frozen Baseline 395K)</option>
+              <option value="gru">TRACEGUARD-X GRU (297K -25%)</option>
+              <option value="attention">Temporal Attention (Step-Weighted)</option>
+              <option value="multitask">Multi-Task Early Warning</option>
+            </select>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <span className="text-gray-400 font-bold uppercase">Gate:</span>
+            <select
+              value={selectedGate}
+              onChange={(e) => setSelectedGate(e.target.value)}
+              disabled={isRunning}
+              className="bg-gray-800 text-amber-300 border border-gray-700 rounded px-2 py-1 text-xs font-semibold focus:outline-none focus:border-amber-500"
+            >
+              <option value="standard">Standard Gate (P ≥ 0.50)</option>
+              <option value="uncertainty_aware">Uncertainty-Aware 3-Way (Allow/Abstain/Block)</option>
+            </select>
+          </div>
+        </div>
+
         <div className="flex gap-6 items-center">
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1.5">
+            <span className="text-[10px] font-mono uppercase text-gray-500 font-bold">Scenario Replay & Verification:</span>
             <div className="flex gap-2">
-               <button onClick={() => startRun('BENIGN')} disabled={isDisconnected || isRunning} className="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded text-xs font-bold uppercase transition-colors border border-gray-600 flex items-center gap-1">
+               <button onClick={() => handleStart('BENIGN')} disabled={isDisconnected || isRunning} className="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded text-xs font-bold uppercase transition-colors border border-gray-600 flex items-center gap-1">
                  <ShieldCheck className="w-3 h-3 text-emerald-400" /> Benign
                </button>
-               <button onClick={() => startRun('INJECTION_RESISTED')} disabled={isDisconnected || isRunning} className="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded text-xs font-bold uppercase transition-colors border border-gray-600 flex items-center gap-1">
+               <button onClick={() => handleStart('INJECTION_RESISTED')} disabled={isDisconnected || isRunning} className="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded text-xs font-bold uppercase transition-colors border border-gray-600 flex items-center gap-1">
                  <Shield className="w-3 h-3 text-amber-400" /> Resisted
                </button>
-               <button onClick={() => startRun('HIJACKED')} disabled={isDisconnected || isRunning} className="px-3 py-1 bg-red-950 hover:bg-red-900 text-red-200 rounded text-xs font-bold uppercase transition-colors border border-red-700 flex items-center gap-1">
+               <button onClick={() => handleStart('HIJACKED')} disabled={isDisconnected || isRunning} className="px-3 py-1 bg-red-950 hover:bg-red-900 text-red-200 rounded text-xs font-bold uppercase transition-colors border border-red-700 flex items-center gap-1">
                  <ShieldAlert className="w-3 h-3 text-red-400" /> Hijacked
                </button>
             </div>
             <div className="flex justify-end gap-2">
-               <button onClick={stopRun} disabled={!isRunning} className="px-2 py-1 bg-gray-900 text-gray-500 rounded text-xs font-bold transition-colors border border-gray-800 flex items-center gap-1">
+               <button onClick={stopRun} disabled={!isRunning} className="px-2 py-0.5 bg-gray-900 text-gray-500 rounded text-[11px] font-bold transition-colors border border-gray-800 flex items-center gap-1">
                  <Square className="w-3 h-3" /> Stop
                </button>
-               <button onClick={reset} disabled={isRunning && !isDisconnected} className="px-2 py-1 bg-gray-900 text-gray-400 hover:text-gray-200 rounded text-xs font-bold transition-colors border border-gray-800 flex items-center gap-1">
+               <button onClick={reset} disabled={isRunning && !isDisconnected} className="px-2 py-0.5 bg-gray-900 text-gray-400 hover:text-gray-200 rounded text-[11px] font-bold transition-colors border border-gray-800 flex items-center gap-1">
                  <RefreshCcw className="w-3 h-3" /> Reset
                </button>
             </div>
